@@ -3,9 +3,20 @@
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS email_otps (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  code_hash VARCHAR(64) NOT NULL,
+  purpose VARCHAR(20) NOT NULL CHECK (purpose IN ('signup', 'login')),
+  attempts INTEGER DEFAULT 0,
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS pages (
@@ -77,3 +88,5 @@ CREATE INDEX IF NOT EXISTS idx_postings_term_id ON postings(term_id);
 CREATE INDEX IF NOT EXISTS idx_postings_page_id ON postings(page_id);
 CREATE INDEX IF NOT EXISTS idx_search_logs_searched_at ON search_logs(searched_at);
 CREATE INDEX IF NOT EXISTS idx_crawl_logs_crawled_at ON crawl_logs(crawled_at);
+CREATE INDEX IF NOT EXISTS idx_email_otps_email ON email_otps(email);
+CREATE INDEX IF NOT EXISTS idx_email_otps_email_purpose ON email_otps(email, purpose);

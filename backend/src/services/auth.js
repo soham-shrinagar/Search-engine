@@ -1,51 +1,6 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
-
-const SALT_ROUNDS = 12;
-
-async function register(email, password) {
-  const existing = await query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
-  if (existing.rows.length > 0) {
-    const err = new Error('Email already registered.');
-    err.status = 409;
-    throw err;
-  }
-
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const result = await query(
-    'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at',
-    [email.toLowerCase(), passwordHash]
-  );
-
-  const user = result.rows[0];
-  const token = generateToken(user);
-  return { user: { id: user.id, email: user.email }, token };
-}
-
-async function login(email, password) {
-  const result = await query(
-    'SELECT id, email, password_hash FROM users WHERE email = $1',
-    [email.toLowerCase()]
-  );
-
-  if (result.rows.length === 0) {
-    const err = new Error('Invalid email or password.');
-    err.status = 401;
-    throw err;
-  }
-
-  const user = result.rows[0];
-  const valid = await bcrypt.compare(password, user.password_hash);
-  if (!valid) {
-    const err = new Error('Invalid email or password.');
-    err.status = 401;
-    throw err;
-  }
-
-  const token = generateToken(user);
-  return { user: { id: user.id, email: user.email }, token };
-}
+const { verifyOtp, normalizeEmail } = require('./otp');
 
 function generateToken(user) {
   return jwt.sign(
@@ -53,6 +8,55 @@ function generateToken(user) {
     process.env.JWT_SECRET,
     { expiresIn: '7d', algorithm: 'HS256' }
   );
+}
+
+async function userExists(email) {
+  const result = await query('SELECT id FROM users WHERE email = $1', [normalizeEmail(email)]);
+  return result.rows.length > 0;
+}
+
+async function createUser(email) {
+  const result = await query(
+    'INSERT INTO users (email) VALUES ($1) RETURNING id, email, created_at',
+    [normalizeEmail(email)]
+  );
+  return result.rows[0];
+}
+
+async function getUserByEmail(email) {
+  const result = await query(
+    'SELECT id, email, created_at FROM users WHERE email = $1',
+    [normalizeEmail(email)]
+  );
+  return result.rows[0] || null;
+}
+
+async function verifySignupOtp(email, code) {
+  const verifiedEmail = await verifyOtp(email, code, 'signup');
+
+  if (await userExists(verifiedEmail)) {
+    const err = new Error('Email already registered.');
+    err.status = 409;
+    throw err;
+  }
+
+  const user = await createUser(verifiedEmail);
+  const token = generateToken(user);
+  return { user: { id: user.id, email: user.email }, token, isNewUser: true };
+}
+
+async function verifyLoginOtp(email, code) {
+  const verifiedEmail = await verifyOtp(email, code, 'login');
+
+  const user = await getUserByEmail(verifiedEmail);
+  if (!user) {
+    const err = new Error('No account found for this email. Create an account first.');
+    err.status = 404;
+    throw err;
+  }
+
+  const token = generateToken(user);
+  return { user: { id: user.id, email: user.email }, token, isNewUser: false };
 }
 
 async function getMe(userId) {
@@ -99,11 +103,25 @@ async function getSavedSearches(userId) {
   return result.rows;
 }
 
+async function deleteSavedSearch(userId, savedId) {
+  const result = await query(
+    'DELETE FROM saved_searches WHERE id = $1 AND user_id = $2 RETURNING id',
+    [savedId, userId]
+  );
+  if (result.rows.length === 0) {
+    const err = new Error('Saved search not found.');
+    err.status = 404;
+    throw err;
+  }
+}
+
 module.exports = {
-  register,
-  login,
+  userExists,
+  verifySignupOtp,
+  verifyLoginOtp,
   getMe,
   getSearchHistory,
   saveSearch,
   getSavedSearches,
+  deleteSavedSearch,
 };

@@ -3,6 +3,11 @@ import { authApi, setUnauthorizedHandler } from '../api/client';
 
 const AuthContext = createContext();
 
+function persistSession({ user, token }) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,18 +45,26 @@ export function AuthProvider({ children }) {
     restoreSession();
   }, [logout]);
 
-  const login = async (email, password) => {
-    const { data } = await authApi.login(email, password);
-    localStorage.setItem('token', data.data.token);
-    localStorage.setItem('user', JSON.stringify(data.data.user));
+  const sendSignupOtp = async (email) => {
+    const { data } = await authApi.sendSignupOtp(email);
+    return data.data;
+  };
+
+  const verifySignupOtp = async (email, code) => {
+    const { data } = await authApi.verifySignupOtp(email, code);
+    persistSession(data.data);
     setUser(data.data.user);
     return data.data;
   };
 
-  const register = async (email, password) => {
-    const { data } = await authApi.register(email, password);
-    localStorage.setItem('token', data.data.token);
-    localStorage.setItem('user', JSON.stringify(data.data.user));
+  const sendLoginOtp = async (email) => {
+    const { data } = await authApi.sendLoginOtp(email);
+    return data.data;
+  };
+
+  const verifyLoginOtp = async (email, code) => {
+    const { data } = await authApi.verifyLoginOtp(email, code);
+    persistSession(data.data);
     setUser(data.data.user);
     return data.data;
   };
@@ -60,8 +73,10 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider value={{
       user,
       loading,
-      login,
-      register,
+      sendSignupOtp,
+      verifySignupOtp,
+      sendLoginOtp,
+      verifyLoginOtp,
       logout,
       isAuthenticated: !!user,
     }}>

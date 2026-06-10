@@ -5,12 +5,12 @@ import AnalyticsCharts from '../components/AnalyticsCharts';
 import CrawlTable from '../components/CrawlTable';
 import { analyticsApi, crawlApi } from '../api/client';
 
-async function fetchSettled(promise, fallback = null) {
+async function fetchSettled(promise) {
   try {
     const res = await promise;
     return res.data.data;
   } catch (err) {
-    return { error: err.message, fallback };
+    return { error: err.message };
   }
 }
 
@@ -76,17 +76,19 @@ export default function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto px-5 py-10">
       <div className="page-header">
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">How your search engine is doing at a glance.</p>
+        <h1 className="page-title">Analytics Dashboard</h1>
+        <p className="page-subtitle">
+          Index health, search activity, crawl performance, and usage trends.
+        </p>
       </div>
 
       {hasAnyError && (
         <div className="card p-4 mb-6 text-sm text-neutral-500">
-          Some sections failed to load. Data shown may be partial.
+          Some sections failed to load. Showing available data.
         </div>
       )}
 
-      <div className="flex gap-10">
+      <div className="flex gap-8">
         <Sidebar />
         <div className="flex-1 min-w-0 space-y-6">
           {sectionErrors.metrics ? (
@@ -103,28 +105,26 @@ export default function Dashboard() {
           />
 
           <div className="card p-5">
-            <h2 className="section-title">Recent crawls</h2>
+            <h2 className="section-title">Recent crawl history</h2>
             {sectionErrors.history ? (
               <p className="text-sm text-neutral-500">Could not load crawl history</p>
             ) : (
-              <CrawlTable data={crawlHistory} loading={loading} />
+              <CrawlTable data={crawlHistory} loading={loading} emptyMessage="No crawls yet — add a page from the Crawl tab." />
             )}
           </div>
 
-          {(errors.length > 0 || sectionErrors.errorLog) && (
-            <div className="card p-5">
-              <h2 className="section-title">Recent errors</h2>
-              {sectionErrors.errorLog ? (
-                <p className="text-sm text-neutral-500">Could not load errors</p>
-              ) : (
-                <CrawlTable
-                  data={errors.map((e) => ({ ...e, status: 'failed' }))}
-                  loading={loading}
-                  emptyMessage="No errors"
-                />
-              )}
-            </div>
-          )}
+          <div className="card p-5">
+            <h2 className="section-title">Recent errors</h2>
+            {sectionErrors.errorLog ? (
+              <p className="text-sm text-neutral-500">Could not load errors</p>
+            ) : (
+              <CrawlTable
+                data={errors.map((e) => ({ ...e, status: 'failed' }))}
+                loading={loading}
+                emptyMessage="No crawl errors — looking good."
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -2,13 +2,16 @@ const express = require('express');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { authenticate } = require('../middleware/auth');
+const { sendOtp } = require('../services/otp');
 const {
-  register,
-  login,
+  userExists,
+  verifySignupOtp,
+  verifyLoginOtp,
   getMe,
   getSearchHistory,
   saveSearch,
   getSavedSearches,
+  deleteSavedSearch,
 } = require('../services/auth');
 
 const router = express.Router();
@@ -17,39 +20,80 @@ function validateEmail(email) {
   return typeof email === 'string' && email.length <= 255 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function validatePassword(password) {
-  return typeof password === 'string' && password.length >= 8 && password.length <= 128;
+function validateOtp(code) {
+  return typeof code === 'string' && /^\d{6}$/.test(code);
 }
 
 router.post(
-  '/register',
+  '/signup/send-otp',
   authLimiter,
   asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    const { email } = req.body;
 
     if (!validateEmail(email)) {
       return res.status(400).json({ success: false, error: 'Valid email is required.' });
     }
-    if (!validatePassword(password)) {
-      return res.status(400).json({ success: false, error: 'Password must be 8–128 characters.' });
+
+    if (await userExists(email)) {
+      return res.status(409).json({ success: false, error: 'Email already registered. Sign in instead.' });
     }
 
-    const result = await register(email, password);
+    const result = await sendOtp(email, 'signup');
+    res.json({ success: true, data: result });
+  })
+);
+
+router.post(
+  '/signup/verify',
+  authLimiter,
+  asyncHandler(async (req, res) => {
+    const { email, code } = req.body;
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ success: false, error: 'Valid email is required.' });
+    }
+    if (!validateOtp(code)) {
+      return res.status(400).json({ success: false, error: 'Enter the 6-digit verification code.' });
+    }
+
+    const result = await verifySignupOtp(email, code);
     res.status(201).json({ success: true, data: result });
   })
 );
 
 router.post(
-  '/login',
+  '/login/send-otp',
   authLimiter,
   asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    const { email } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    if (!validateEmail(email)) {
+      return res.status(400).json({ success: false, error: 'Valid email is required.' });
     }
 
-    const result = await login(email, password);
+    if (!(await userExists(email))) {
+      return res.status(404).json({ success: false, error: 'No account found. Create an account first.' });
+    }
+
+    const result = await sendOtp(email, 'login');
+    res.json({ success: true, data: result });
+  })
+);
+
+router.post(
+  '/login/verify',
+  authLimiter,
+  asyncHandler(async (req, res) => {
+    const { email, code } = req.body;
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ success: false, error: 'Valid email is required.' });
+    }
+    if (!validateOtp(code)) {
+      return res.status(400).json({ success: false, error: 'Enter the 6-digit verification code.' });
+    }
+
+    const result = await verifyLoginOtp(email, code);
     res.json({ success: true, data: result });
   })
 );
@@ -95,6 +139,19 @@ router.get(
   asyncHandler(async (req, res) => {
     const saved = await getSavedSearches(req.user.id);
     res.json({ success: true, data: saved });
+  })
+);
+
+router.delete(
+  '/saved/:id',
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const savedId = parseInt(req.params.id, 10);
+    if (!savedId) {
+      return res.status(400).json({ success: false, error: 'Invalid saved search id.' });
+    }
+    await deleteSavedSearch(req.user.id, savedId);
+    res.json({ success: true });
   })
 );
 

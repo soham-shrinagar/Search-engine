@@ -74,7 +74,7 @@ export default function SearchBar({ initialQuery = '', large = false, onSearch }
             value={query}
             onChange={handleChange}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-            placeholder="What are you looking for?"
+            placeholder="Search indexed pages…"
             className={`input-field w-full ${large ? 'py-3.5 text-base' : ''}`}
             aria-label="Search query"
           />

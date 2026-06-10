@@ -7,6 +7,7 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/crawl', label: 'Crawl' },
   { to: '/bookmarks', label: 'Bookmarks', auth: true },
+  { to: '/account', label: 'Account', auth: true },
 ];
 
 export default function Navbar() {
@@ -69,14 +70,16 @@ export default function Navbar() {
                 {user.email}
               </span>
               <button onClick={handleLogout} className="btn-ghost text-xs hidden sm:inline-flex">
-                Sign out
+                Logout
               </button>
             </>
-          ) : (
+          ) : location.pathname === '/' ? (
             <>
               <Link to="/login" className="btn-ghost text-sm hidden sm:inline-flex">Sign in</Link>
               <Link to="/register" className="btn-primary text-sm py-2 px-4 hidden sm:inline-flex">Sign up</Link>
             </>
+          ) : (
+            <Link to="/login" className="btn-primary text-sm py-2 px-4 hidden sm:inline-flex">Sign in</Link>
           )}
 
           <button
@@ -109,13 +112,15 @@ export default function Navbar() {
           ))}
           {isAuthenticated ? (
             <button onClick={handleLogout} className="block py-2 text-sm text-neutral-500 w-full text-left">
-              Sign out
+              Logout
             </button>
-          ) : (
+          ) : location.pathname === '/' ? (
             <>
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2 text-sm text-neutral-500">Sign in</Link>
               <Link to="/register" onClick={() => setMenuOpen(false)} className="block py-2 text-sm font-medium">Sign up</Link>
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2 text-sm text-neutral-500">Sign in</Link>
             </>
+          ) : (
+            <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2 text-sm font-medium">Sign in</Link>
           )}
         </div>
       )}

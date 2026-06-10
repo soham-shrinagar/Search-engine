@@ -1,6 +1,16 @@
+const STATUS_LABELS = {
+  indexed: 'Indexed',
+  success: 'Success',
+  skipped: 'Skipped',
+  crawling: 'Crawling',
+  pending: 'Pending',
+  failed: 'Failed',
+};
+
 function StatusBadge({ status }) {
-  const isFailed = status === 'failed';
+  const label = STATUS_LABELS[status] || status;
   const isActive = status === 'indexed' || status === 'success' || status === 'skipped';
+  const isFailed = status === 'failed';
 
   return (
     <span
@@ -12,7 +22,7 @@ function StatusBadge({ status }) {
             : ''
       }`}
     >
-      {status}
+      {label}
     </span>
   );
 }
@@ -27,7 +37,7 @@ function TableSkeleton() {
   );
 }
 
-export default function CrawlTable({ data, loading, emptyMessage = 'No data yet' }) {
+export default function CrawlTable({ data, loading, emptyMessage = 'No crawl data available' }) {
   if (loading) return <TableSkeleton />;
 
   if (!data?.length) {
@@ -41,10 +51,10 @@ export default function CrawlTable({ data, loading, emptyMessage = 'No data yet'
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-100 dark:border-neutral-900">
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">Page</th>
+            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">URL</th>
             <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">Status</th>
             <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400 hidden md:table-cell">Error</th>
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">When</th>
+            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">Date</th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +80,7 @@ export default function CrawlTable({ data, loading, emptyMessage = 'No data yet'
                 {row.error_message || '—'}
               </td>
               <td className="py-2.5 px-3 text-xs text-neutral-400 whitespace-nowrap tabular-nums">
-                {new Date(row.crawled_at || row.last_crawled_at || row.created_at).toLocaleDateString()}
+                {new Date(row.crawled_at || row.last_crawled_at || row.created_at).toLocaleString()}
               </td>
             </tr>
           ))}

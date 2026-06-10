@@ -27,9 +27,7 @@ export default function SearchResultsPage() {
       return;
     }
 
-    if (abortRef.current) {
-      abortRef.current.abort();
-    }
+    if (abortRef.current) abortRef.current.abort();
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -57,9 +55,7 @@ export default function SearchResultsPage() {
         setLoading(false);
       });
 
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [query, page]);
 
   const handlePageChange = (newPage) => {
@@ -76,16 +72,17 @@ export default function SearchResultsPage() {
           to="/"
           className="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors mb-4 inline-block"
         >
-          ← Home
+          ← Back
         </Link>
         <SearchBar initialQuery={query} />
       </div>
 
       {!hasQuery ? (
         <div className="card p-10 text-center">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Enter a search term above to find indexed pages.
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+            Type something above to search your added pages.
           </p>
+          <Link to="/crawl" className="btn-secondary text-sm">Add a page first</Link>
         </div>
       ) : (
         <SearchResults

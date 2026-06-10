@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import CrawlTable from '../components/CrawlTable';
 import { crawlApi } from '../api/client';
@@ -67,10 +68,10 @@ export default function CrawlManagement() {
       if (recursive) {
         const { summary } = data.data;
         setSubmitSuccess(
-          `Done — ${summary.indexed} indexed, ${summary.skipped} skipped, ${summary.failed} failed.`
+          `Crawl complete — ${summary.indexed} indexed, ${summary.skipped} skipped, ${summary.failed} failed.`
         );
       } else {
-        setSubmitSuccess(`Indexed "${data.data.title || data.data.url}".`);
+        setSubmitSuccess(`Indexed "${data.data.title || data.data.url}" successfully.`);
       }
       setUrl('');
       loadData();
@@ -84,24 +85,32 @@ export default function CrawlManagement() {
   return (
     <div className="max-w-6xl mx-auto px-5 py-10">
       <div className="page-header">
-        <h1 className="page-title">Crawl</h1>
-        <p className="page-subtitle">Add pages to your search index.</p>
+        <h1 className="page-title">Crawl Management</h1>
+        <p className="page-subtitle">
+          Submit URLs, crawl recursively, and manage your indexed pages.
+        </p>
       </div>
 
-      <div className="flex gap-10">
+      <div className="flex gap-8">
         <Sidebar />
         <div className="flex-1 min-w-0 space-y-6">
           <div className="card p-5">
-            <h2 className="section-title">Add a URL</h2>
+            <h2 className="section-title">Submit URL for crawling</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com"
-                className="input-field"
-                required
-              />
+              <div>
+                <label htmlFor="crawl-url" className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5">
+                  Website URL
+                </label>
+                <input
+                  id="crawl-url"
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  className="input-field"
+                  required
+                />
+              </div>
 
               <div className="flex flex-wrap gap-x-6 gap-y-3 items-center text-sm text-neutral-600 dark:text-neutral-400">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -111,13 +120,13 @@ export default function CrawlManagement() {
                     onChange={(e) => setRecursive(e.target.checked)}
                     className="rounded border-neutral-300 dark:border-neutral-700"
                   />
-                  Follow links recursively
+                  Recursive crawl (follow links)
                 </label>
 
                 {recursive && (
                   <>
                     <label className="flex items-center gap-2">
-                      Depth
+                      Max depth
                       <input
                         type="number"
                         value={maxDepth}
@@ -142,15 +151,22 @@ export default function CrawlManagement() {
                 )}
               </div>
 
+              <p className="hint">
+                Supports robots.txt, duplicate detection via content hash, and automatic retries.
+              </p>
+
               {submitError && (
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">{submitError}</p>
               )}
               {submitSuccess && (
-                <p className="text-sm text-neutral-950 dark:text-neutral-50">{submitSuccess}</p>
+                <div className="card p-4 bg-neutral-50 dark:bg-neutral-900">
+                  <p className="text-sm text-neutral-950 dark:text-neutral-50">{submitSuccess}</p>
+                  <Link to="/" className="btn-primary text-sm mt-3 inline-flex">Search now</Link>
+                </div>
               )}
 
               <button type="submit" disabled={submitting} className="btn-primary">
-                {submitting ? 'Crawling…' : 'Start crawl'}
+                {submitting ? 'Crawling…' : 'Submit URL'}
               </button>
             </form>
           </div>
@@ -163,12 +179,16 @@ export default function CrawlManagement() {
 
           <div className="card p-5">
             <h2 className="section-title">Indexed pages</h2>
-            <CrawlTable data={pages} loading={loading} emptyMessage="No pages yet — add a URL above." />
+            <CrawlTable
+              data={pages}
+              loading={loading}
+              emptyMessage="No pages crawled yet. Submit a URL above."
+            />
           </div>
 
           <div className="card p-5">
-            <h2 className="section-title">History</h2>
-            <CrawlTable data={history} loading={loading} />
+            <h2 className="section-title">Crawl history</h2>
+            <CrawlTable data={history} loading={loading} emptyMessage="No crawl history yet." />
           </div>
         </div>
       </div>

@@ -67,12 +67,15 @@ export const analyticsApi = {
 };
 
 export const authApi = {
-  register: (email, password) => client.post('/auth/register', { email, password }),
-  login: (email, password) => client.post('/auth/login', { email, password }),
+  sendSignupOtp: (email) => client.post('/auth/signup/send-otp', { email }),
+  verifySignupOtp: (email, code) => client.post('/auth/signup/verify', { email, code }),
+  sendLoginOtp: (email) => client.post('/auth/login/send-otp', { email }),
+  verifyLoginOtp: (email, code) => client.post('/auth/login/verify', { email, code }),
   getMe: () => client.get('/auth/me'),
   getHistory: () => client.get('/auth/history'),
   saveSearch: (query) => client.post('/auth/saved', { query }),
   getSavedSearches: () => client.get('/auth/saved'),
+  deleteSavedSearch: (id) => client.delete(`/auth/saved/${id}`),
 };
 
 export const bookmarkApi = {

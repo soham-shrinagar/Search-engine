@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { BookmarkProvider } from './context/BookmarkContext';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Landing = lazy(() => import('./pages/Landing'));
 const SearchResultsPage = lazy(() => import('./pages/SearchResultsPage'));
@@ -12,6 +13,7 @@ const CrawlManagement = lazy(() => import('./pages/CrawlManagement'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Bookmarks = lazy(() => import('./pages/Bookmarks'));
+const Account = lazy(() => import('./pages/Account'));
 
 function PageLoader() {
   return (
@@ -37,7 +39,22 @@ export default function App() {
                   <Route path="/crawl" element={<CrawlManagement />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
-                  <Route path="/bookmarks" element={<Bookmarks />} />
+                  <Route
+                    path="/bookmarks"
+                    element={(
+                      <ProtectedRoute>
+                        <Bookmarks />
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/account"
+                    element={(
+                      <ProtectedRoute>
+                        <Account />
+                      </ProtectedRoute>
+                    )}
+                  />
                 </Routes>
               </Suspense>
             </main>

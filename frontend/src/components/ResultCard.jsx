@@ -41,16 +41,16 @@ export default function ResultCard({ result }) {
             className="text-sm text-neutral-600 dark:text-neutral-400 mt-2.5 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: result.highlightedSnippet || result.snippet }}
           />
-          {(result.score || result.matchedTerms?.length > 0) && (
-            <div className="flex items-center gap-2 mt-3 flex-wrap">
-              {result.score > 0 && (
-                <span className="badge">{result.score}</span>
-              )}
-              {result.matchedTerms?.map((term) => (
-                <span key={term} className="badge">{term}</span>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            {result.score > 0 && (
+              <span className="badge" title="TF-IDF relevance score">
+                Score {result.score}
+              </span>
+            )}
+            {result.matchedTerms?.map((term) => (
+              <span key={term} className="badge">{term}</span>
+            ))}
+          </div>
           {bookmarkError && (
             <p className="text-xs text-neutral-500 mt-2">{bookmarkError}</p>
           )}
@@ -60,11 +60,12 @@ export default function ResultCard({ result }) {
           <button
             onClick={handleBookmark}
             disabled={bookmarkLoading}
-            className="btn-ghost flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 transition-opacity"
+            title={bookmarked ? 'Remove bookmark' : 'Bookmark page'}
+            className="btn-ghost flex-shrink-0 sm:opacity-80"
             aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark page'}
           >
             <svg
-              className="w-4 h-4"
+              className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`}
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth="1.5"
