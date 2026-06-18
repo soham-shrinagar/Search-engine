@@ -10,6 +10,22 @@ function isBrevoConfigured() {
   return Boolean(process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL);
 }
 
+function assertBrevoApiKey() {
+  const key = process.env.BREVO_API_KEY || '';
+  if (key.startsWith('xsmtpsib-')) {
+    const err = new Error(
+      'BREVO_API_KEY is an SMTP key (xsmtpsib-). Create an API key (xkeysib-) in Brevo → SMTP & API → API Keys.'
+    );
+    err.status = 503;
+    throw err;
+  }
+  if (!key.startsWith('xkeysib-')) {
+    const err = new Error('BREVO_API_KEY looks invalid. It should start with xkeysib-.');
+    err.status = 503;
+    throw err;
+  }
+}
+
 function isEmailConfigured() {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 }
@@ -55,6 +71,8 @@ async function sendViaResend(email, subject, text) {
 }
 
 async function sendViaBrevo(email, subject, text) {
+  assertBrevoApiKey();
+
   const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
@@ -71,7 +89,9 @@ async function sendViaBrevo(email, subject, text) {
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Email delivery failed: ${body}`);
+    const err = new Error(`Email delivery failed: ${body}`);
+    err.status = 503;
+    throw err;
   }
 }
 
