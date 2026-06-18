@@ -26,11 +26,28 @@ if (!process.env.DATABASE_URL) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(compression());
 app.use(generalLimiter);
+function getAllowedOrigins() {
+  const raw = process.env.CORS_ORIGIN || 'http://localhost:5173';
+  return raw.split(',').map((o) => o.trim()).filter(Boolean);
+}
+
+const allowedOrigins = getAllowedOrigins();
+const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS !== 'false';
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowVercelPreviews && /^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '1mb' }));
@@ -38,9 +55,27 @@ app.use(express.json({ limit: '1mb' }));
 app.get('/api/health', async (req, res) => {
   try {
     await query('SELECT 1');
-    res.json({ success: true, data: { status: 'ok', database: 'connected' } });
-  } catch {
-    res.status(503).json({ success: false, error: 'Database unavailable.' });
+    const tables = await query(
+      `SELECT table_name FROM information_schema.tables
+       WHERE table_schema = 'public'
+         AND table_name IN ('pages', 'terms', 'postings', 'users', 'email_otps')`
+    );
+    const found = tables.rows.map((r) => r.table_name);
+    const required = ['pages', 'terms', 'postings', 'users', 'email_otps'];
+    const missing = required.filter((t) => !found.includes(t));
+    const ok = missing.length === 0;
+
+    res.status(ok ? 200 : 503).json({
+      success: ok,
+      data: {
+        status: ok ? 'ok' : 'schema_incomplete',
+        database: 'connected',
+        tables: found,
+        ...(missing.length > 0 && { missingTables: missing, hint: 'Run npm run migrate with this DATABASE_URL' }),
+      },
+    });
+  } catch (err) {
+    res.status(503).json({ success: false, error: 'Database unavailable.', detail: err.message });
   }
 });
 
@@ -58,6 +93,8 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`SearchSphere API running on port ${PORT}`);
+  console.log(`CORS allowed origins: ${allowedOrigins.join(', ')}`);
+  if (allowVercelPreviews) console.log('CORS: *.vercel.app preview URLs allowed');
 });
 
 module.exports = app;

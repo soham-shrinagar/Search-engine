@@ -2,6 +2,12 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+if (import.meta.env.PROD && API_URL.includes('localhost')) {
+  console.error(
+    'VITE_API_URL is missing or points to localhost. Set it on Vercel to your Render URL + /api, then redeploy.'
+  );
+}
+
 const client = axios.create({
   baseURL: API_URL,
   timeout: 30000,
@@ -30,6 +36,12 @@ client.interceptors.response.use(
     }
     if (error.response?.status === 401 && onUnauthorized) {
       onUnauthorized();
+    }
+    if (!error.response && error.message === 'Network Error') {
+      const hint = import.meta.env.PROD && API_URL.includes('localhost')
+        ? `Cannot reach API (still pointing at ${API_URL}). Set VITE_API_URL on Vercel to https://YOUR-APP.onrender.com/api and redeploy.`
+        : `Cannot reach API at ${API_URL}. Check that Render is running and CORS_ORIGIN matches your Vercel URL.`;
+      return Promise.reject(new Error(hint));
     }
     const message = error.response?.data?.error || error.message || 'An error occurred';
     return Promise.reject(new Error(message));
