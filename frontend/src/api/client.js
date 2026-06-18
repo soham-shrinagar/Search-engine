@@ -14,39 +14,50 @@ const client = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+const authClient = axios.create({
+  baseURL: API_URL,
+  timeout: 60000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+function attachAuthInterceptor(instance) {
+  instance.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (axios.isCancel(error)) {
+        return Promise.reject(error);
+      }
+      if (error.response?.status === 401 && onUnauthorized) {
+        onUnauthorized();
+      }
+      if (!error.response && error.message === 'Network Error') {
+        const hint = import.meta.env.PROD && API_URL.includes('localhost')
+          ? `Cannot reach API (still pointing at ${API_URL}). Set VITE_API_URL on Vercel to https://YOUR-APP.onrender.com/api and redeploy.`
+          : `Cannot reach API at ${API_URL}. Check that Render is running and CORS_ORIGIN matches your Vercel URL.`;
+        return Promise.reject(new Error(hint));
+      }
+      const message = error.response?.data?.error || error.message || 'An error occurred';
+      return Promise.reject(new Error(message));
+    }
+  );
+}
+
+attachAuthInterceptor(client);
+attachAuthInterceptor(authClient);
+
 let onUnauthorized = null;
 
 export function setUnauthorizedHandler(handler) {
   onUnauthorized = handler;
 }
-
-client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-client.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (axios.isCancel(error)) {
-      return Promise.reject(error);
-    }
-    if (error.response?.status === 401 && onUnauthorized) {
-      onUnauthorized();
-    }
-    if (!error.response && error.message === 'Network Error') {
-      const hint = import.meta.env.PROD && API_URL.includes('localhost')
-        ? `Cannot reach API (still pointing at ${API_URL}). Set VITE_API_URL on Vercel to https://YOUR-APP.onrender.com/api and redeploy.`
-        : `Cannot reach API at ${API_URL}. Check that Render is running and CORS_ORIGIN matches your Vercel URL.`;
-      return Promise.reject(new Error(hint));
-    }
-    const message = error.response?.data?.error || error.message || 'An error occurred';
-    return Promise.reject(new Error(message));
-  }
-);
 
 export function isRequestCanceled(error) {
   return (
@@ -79,10 +90,10 @@ export const analyticsApi = {
 };
 
 export const authApi = {
-  sendSignupOtp: (email) => client.post('/auth/signup/send-otp', { email }),
-  verifySignupOtp: (email, code) => client.post('/auth/signup/verify', { email, code }),
-  sendLoginOtp: (email) => client.post('/auth/login/send-otp', { email }),
-  verifyLoginOtp: (email, code) => client.post('/auth/login/verify', { email, code }),
+  sendSignupOtp: (email) => authClient.post('/auth/signup/send-otp', { email }),
+  verifySignupOtp: (email, code) => authClient.post('/auth/signup/verify', { email, code }),
+  sendLoginOtp: (email) => authClient.post('/auth/login/send-otp', { email }),
+  verifyLoginOtp: (email, code) => authClient.post('/auth/login/verify', { email, code }),
   getMe: () => client.get('/auth/me'),
   getHistory: () => client.get('/auth/history'),
   saveSearch: (query) => client.post('/auth/saved', { query }),
