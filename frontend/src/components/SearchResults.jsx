@@ -65,9 +65,9 @@ export default function SearchResults({ results, loading, error, pagination, onP
         <p className="text-sm text-ink-muted dark:text-ink-dark-muted max-w-xs mx-auto leading-relaxed">
           Try different words, or crawl the page first.
         </p>
-        <div className="flex gap-2 justify-center mt-6">
-          <Link to="/crawl" className="btn-primary text-sm">Crawl a page</Link>
-          <Link to="/" className="btn-secondary text-sm">New search</Link>
+        <div className="flex flex-col sm:flex-row gap-2 justify-center mt-6 w-full sm:w-auto">
+          <Link to="/crawl" className="btn-primary text-sm w-full sm:w-auto text-center">Crawl a page</Link>
+          <Link to="/" className="btn-secondary text-sm w-full sm:w-auto text-center">New search</Link>
         </div>
       </div>
     );
@@ -75,7 +75,7 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-1 pb-4 border-b border-line/80 dark:border-line-dark">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-1 pb-3 sm:pb-4 border-b border-line/80 dark:border-line-dark">
         <p className="hint">
           {pagination.totalResults} results · {responseTime}ms
         </p>

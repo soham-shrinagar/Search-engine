@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
+import AppPageLayout from '../components/AppPageLayout';
 import CrawlTable from '../components/CrawlTable';
 import { crawlApi } from '../api/client';
 
@@ -83,109 +83,97 @@ export default function CrawlManagement() {
   };
 
   return (
-    <div className="page-shell">
-      <div className="page-header">
-        <h1 className="page-title">Crawl</h1>
-        <p className="page-subtitle">Add URLs to your search index.</p>
-      </div>
+    <AppPageLayout title="Crawl" subtitle="Add URLs to your search index.">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="card-flat">
+          <h2 className="section-title">Add URL</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="crawl-url" className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
+                URL
+              </label>
+              <input
+                id="crawl-url"
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="input-field"
+                required
+              />
+            </div>
 
-      <div className="flex gap-10">
-        <Sidebar />
-        <div className="flex-1 min-w-0 space-y-6">
-          <div className="card-flat p-5 sm:p-6">
-            <h2 className="section-title">Add URL</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="crawl-url" className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
-                  URL
-                </label>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-x-5 sm:gap-y-2 text-sm text-ink-muted dark:text-ink-dark-muted">
+              <label className="flex items-center gap-2 cursor-pointer select-none min-h-[44px] sm:min-h-0">
                 <input
-                  id="crawl-url"
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://example.com"
-                  className="input-field"
-                  required
+                  type="checkbox"
+                  checked={recursive}
+                  onChange={(e) => setRecursive(e.target.checked)}
+                  className="rounded border-line dark:border-line-dark text-ink focus:ring-ink/20 w-4 h-4"
                 />
-              </div>
+                Follow links
+              </label>
 
-              <div className="flex flex-wrap gap-x-5 gap-y-2 items-center text-sm text-ink-muted dark:text-ink-dark-muted">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={recursive}
-                    onChange={(e) => setRecursive(e.target.checked)}
-                    className="rounded border-line dark:border-line-dark text-ink focus:ring-ink/20"
-                  />
-                  Follow links
-                </label>
-
-                {recursive && (
-                  <>
-                    <label className="flex items-center gap-2">
-                      Depth
-                      <input
-                        type="number"
-                        value={maxDepth}
-                        onChange={handleDepthChange}
-                        min={1}
-                        max={5}
-                        className="input-field w-14 py-1.5 text-center text-sm"
-                      />
-                    </label>
-                    <label className="flex items-center gap-2">
-                      Max pages
-                      <input
-                        type="number"
-                        value={maxPages}
-                        onChange={handleMaxPagesChange}
-                        min={1}
-                        max={100}
-                        className="input-field w-16 py-1.5 text-center text-sm"
-                      />
-                    </label>
-                  </>
-                )}
-              </div>
-
-              {submitError && (
-                <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{submitError}</p>
-              )}
-              {submitSuccess && (
-                <div className="rounded-lg bg-surface dark:bg-surface-dark-hover border border-line/60 dark:border-line-dark px-4 py-3">
-                  <p className="text-sm text-ink dark:text-ink-dark">{submitSuccess}</p>
-                  <Link to="/" className="btn-primary text-xs mt-3 inline-flex px-3 py-1.5">Search now</Link>
+              {recursive && (
+                <div className="flex flex-wrap gap-3 sm:gap-5">
+                  <label className="flex items-center gap-2 min-h-[44px] sm:min-h-0">
+                    Depth
+                    <input
+                      type="number"
+                      value={maxDepth}
+                      onChange={handleDepthChange}
+                      min={1}
+                      max={5}
+                      className="input-field w-16 py-2 text-center text-sm"
+                    />
+                  </label>
+                  <label className="flex items-center gap-2 min-h-[44px] sm:min-h-0">
+                    Max pages
+                    <input
+                      type="number"
+                      value={maxPages}
+                      onChange={handleMaxPagesChange}
+                      min={1}
+                      max={100}
+                      className="input-field w-20 py-2 text-center text-sm"
+                    />
+                  </label>
                 </div>
               )}
-
-              <button type="submit" disabled={submitting} className="btn-primary">
-                {submitting ? 'Crawling…' : 'Submit'}
-              </button>
-            </form>
-          </div>
-
-          {loadError && (
-            <div className="card-flat px-4 py-3 text-sm text-ink-muted">
-              Couldn&apos;t load data — {loadError}
             </div>
-          )}
 
-          <div className="card-flat p-5">
-            <h2 className="section-title">Indexed pages</h2>
-            <CrawlTable
-              data={pages}
-              loading={loading}
-              emptyMessage="Nothing indexed yet."
-            />
-          </div>
+            {submitError && (
+              <p className="text-sm text-ink-muted dark:text-ink-dark-muted break-words">{submitError}</p>
+            )}
+            {submitSuccess && (
+              <div className="rounded-lg bg-surface dark:bg-surface-dark-hover border border-line/60 dark:border-line-dark px-4 py-3">
+                <p className="text-sm text-ink dark:text-ink-dark break-words">{submitSuccess}</p>
+                <Link to="/" className="btn-primary text-xs mt-3 inline-flex px-3 py-2">Search now</Link>
+              </div>
+            )}
 
-          <div className="card-flat p-5">
-            <h2 className="section-title">History</h2>
-            <CrawlTable data={history} loading={loading} emptyMessage="No history yet." />
+            <button type="submit" disabled={submitting} className="btn-primary w-full sm:w-auto py-2.5">
+              {submitting ? 'Crawling…' : 'Submit'}
+            </button>
+          </form>
+        </div>
+
+        {loadError && (
+          <div className="card-flat text-sm text-ink-muted break-words">
+            Couldn&apos;t load data — {loadError}
           </div>
+        )}
+
+        <div className="card-flat">
+          <h2 className="section-title">Indexed pages</h2>
+          <CrawlTable data={pages} loading={loading} emptyMessage="Nothing indexed yet." />
+        </div>
+
+        <div className="card-flat">
+          <h2 className="section-title">History</h2>
+          <CrawlTable data={history} loading={loading} emptyMessage="No history yet." />
         </div>
       </div>
-    </div>
+    </AppPageLayout>
   );
 }

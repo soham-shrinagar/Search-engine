@@ -65,40 +65,39 @@ export default function SearchBar({ initialQuery = '', large = false, onSearch }
     navigate(`/search?q=${encodeURIComponent(term)}`);
   };
 
+  const stackOnMobile = 'flex-col sm:flex-row';
+
   return (
     <div ref={wrapperRef} className="relative w-full">
-      <form
-        onSubmit={handleSubmit}
-        className={`flex gap-2 ${large ? 'flex-col sm:flex-row' : ''}`}
-      >
+      <form onSubmit={handleSubmit} className={`flex gap-2 ${stackOnMobile}`}>
         <input
           type="text"
           value={query}
           onChange={handleChange}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder="Search indexed pages…"
-          className={`input-field flex-1 ${large ? 'py-3 sm:py-3.5 text-[15px] rounded-xl' : ''}`}
+          className={`input-field flex-1 min-w-0 ${large ? 'py-3 sm:py-3.5 text-[15px] rounded-xl' : ''}`}
           aria-label="Search query"
         />
         <button
           type="submit"
-          className={`btn-primary flex-shrink-0 ${large ? 'sm:px-6 py-3 rounded-xl' : ''}`}
+          className={`btn-primary flex-shrink-0 w-full sm:w-auto ${large ? 'sm:px-6 py-3 rounded-xl' : ''}`}
         >
           Search
         </button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-1.5 card overflow-hidden max-h-52 overflow-y-auto py-1">
+        <ul className="absolute z-50 w-full mt-1.5 card overflow-hidden max-h-52 overflow-y-auto py-1 left-0 right-0">
           {suggestions.map((s) => (
             <li key={s.term}>
               <button
                 type="button"
                 onClick={() => handleSuggestionClick(s.term)}
-                className="w-full text-left px-3.5 py-2 text-sm hover:bg-surface dark:hover:bg-surface-dark-hover transition-colors flex justify-between gap-4"
+                className="w-full text-left px-3.5 py-2.5 text-sm hover:bg-surface dark:hover:bg-surface-dark-hover transition-colors flex justify-between gap-3 min-h-[44px] items-center"
               >
-                <span className="text-ink dark:text-ink-dark">{s.term}</span>
-                <span className="text-xs text-ink-faint tabular-nums">{s.documentFrequency}</span>
+                <span className="text-ink dark:text-ink-dark truncate">{s.term}</span>
+                <span className="text-xs text-ink-faint tabular-nums flex-shrink-0">{s.documentFrequency}</span>
               </button>
             </li>
           ))}

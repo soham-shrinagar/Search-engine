@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar';
+import AppPageLayout from '../components/AppPageLayout';
 import DashboardCards from '../components/DashboardCards';
 import AnalyticsCharts from '../components/AnalyticsCharts';
 import CrawlTable from '../components/CrawlTable';
@@ -74,57 +74,52 @@ export default function Dashboard() {
   const hasAnyError = Object.keys(sectionErrors).length > 0;
 
   return (
-    <div className="page-shell">
-      <div className="page-header">
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Index stats, search activity, and crawl logs.</p>
-      </div>
-
+    <AppPageLayout
+      title="Dashboard"
+      subtitle="Index stats, search activity, and crawl logs."
+    >
       {hasAnyError && (
-        <div className="card-flat px-4 py-3 mb-6 text-sm text-ink-muted dark:text-ink-dark-muted">
+        <div className="card-flat mb-4 sm:mb-6 text-sm text-ink-muted dark:text-ink-dark-muted">
           Some sections couldn&apos;t load. Showing what&apos;s available.
         </div>
       )}
 
-      <div className="flex gap-10">
-        <Sidebar />
-        <div className="flex-1 min-w-0 space-y-6">
-          {sectionErrors.metrics ? (
-            <div className="card-flat p-4 text-sm text-ink-muted">Metrics unavailable</div>
+      <div className="space-y-4 sm:space-y-6">
+        {sectionErrors.metrics ? (
+          <div className="card-flat text-sm text-ink-muted">Metrics unavailable</div>
+        ) : (
+          <DashboardCards metrics={metrics} loading={loading} />
+        )}
+
+        <AnalyticsCharts
+          searchesOverTime={searchesOverTime}
+          topTerms={topTerms}
+          topDocuments={topDocuments}
+          loading={loading}
+        />
+
+        <div className="card-flat">
+          <h2 className="section-title">Recent crawls</h2>
+          {sectionErrors.history ? (
+            <p className="text-sm text-ink-muted">Couldn&apos;t load history</p>
           ) : (
-            <DashboardCards metrics={metrics} loading={loading} />
+            <CrawlTable data={crawlHistory} loading={loading} emptyMessage="No crawls yet." />
           )}
+        </div>
 
-          <AnalyticsCharts
-            searchesOverTime={searchesOverTime}
-            topTerms={topTerms}
-            topDocuments={topDocuments}
-            loading={loading}
-          />
-
-          <div className="card-flat p-5">
-            <h2 className="section-title">Recent crawls</h2>
-            {sectionErrors.history ? (
-              <p className="text-sm text-ink-muted">Couldn&apos;t load history</p>
-            ) : (
-              <CrawlTable data={crawlHistory} loading={loading} emptyMessage="No crawls yet." />
-            )}
-          </div>
-
-          <div className="card-flat p-5">
-            <h2 className="section-title">Errors</h2>
-            {sectionErrors.errorLog ? (
-              <p className="text-sm text-ink-muted">Couldn&apos;t load errors</p>
-            ) : (
-              <CrawlTable
-                data={errors.map((e) => ({ ...e, status: 'failed' }))}
-                loading={loading}
-                emptyMessage="No errors."
-              />
-            )}
-          </div>
+        <div className="card-flat">
+          <h2 className="section-title">Errors</h2>
+          {sectionErrors.errorLog ? (
+            <p className="text-sm text-ink-muted">Couldn&apos;t load errors</p>
+          ) : (
+            <CrawlTable
+              data={errors.map((e) => ({ ...e, status: 'failed' }))}
+              loading={loading}
+              emptyMessage="No errors."
+            />
+          )}
         </div>
       </div>
-    </div>
+    </AppPageLayout>
   );
 }

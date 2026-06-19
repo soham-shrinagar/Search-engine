@@ -66,7 +66,7 @@ export default function OtpAuthForm({
         <p className="page-subtitle mx-auto">{subtitle}</p>
       </div>
 
-      <div className="card-flat p-6 sm:p-7">
+      <div className="card-flat">
         {step === 'email' ? (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>

@@ -63,8 +63,8 @@ export default function ResultCard({ result }) {
             onClick={handleBookmark}
             disabled={bookmarkLoading}
             title={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-            className={`btn-ghost flex-shrink-0 p-2 rounded-lg ${
-              bookmarked ? 'text-ink dark:text-ink-dark' : 'opacity-50 group-hover:opacity-100'
+            className={`btn-ghost flex-shrink-0 p-2.5 rounded-lg touch-target ${
+              bookmarked ? 'text-ink dark:text-ink-dark' : 'opacity-70 sm:opacity-50 sm:group-hover:opacity-100'
             }`}
             aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark page'}
           >

@@ -66,9 +66,9 @@ export default function SearchResultsPage() {
   const hasQuery = query.trim().length > 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-5 sm:px-6 py-8 sm:py-10">
-      <div className="mb-8">
-        <Link to="/" className="link-subtle text-xs mb-4 inline-block">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <div className="mb-6 sm:mb-8">
+        <Link to="/" className="link-subtle text-xs mb-3 sm:mb-4 inline-block min-h-[44px] flex items-center">
           ← Home
         </Link>
         <SearchBar initialQuery={query} />
@@ -79,7 +79,7 @@ export default function SearchResultsPage() {
           <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-4">
             Enter a query above.
           </p>
-          <Link to="/crawl" className="btn-secondary text-sm">Add pages first</Link>
+          <Link to="/crawl" className="btn-secondary text-sm w-full sm:w-auto max-w-xs mx-auto">Add pages first</Link>
         </div>
       ) : (
         <SearchResults

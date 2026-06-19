@@ -11,11 +11,11 @@ export default function Pagination({ page, totalPages, onPageChange }) {
   for (let i = start; i <= end; i++) pages.push(i);
 
   return (
-    <nav className="flex items-center justify-center gap-1 mt-8 pt-6 border-t border-line/80 dark:border-line-dark" aria-label="Pagination">
+    <nav className="flex items-center justify-center gap-1 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-line/80 dark:border-line-dark" aria-label="Pagination">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className="btn-ghost text-xs disabled:opacity-30 px-3"
+        className="btn-ghost text-xs disabled:opacity-30 px-3 py-2.5 min-h-[44px]"
       >
         Prev
       </button>
@@ -24,7 +24,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         <button
           key={p}
           onClick={() => onPageChange(p)}
-          className={`min-w-[2rem] h-8 rounded-md text-xs transition-colors ${
+          className={`min-w-[44px] h-11 sm:h-9 rounded-md text-xs transition-colors ${
             p === page
               ? 'bg-ink text-page dark:bg-ink-dark dark:text-page-dark font-medium'
               : 'text-ink-muted hover:bg-surface dark:hover:bg-surface-dark'
@@ -37,7 +37,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className="btn-ghost text-xs disabled:opacity-30 px-3"
+        className="btn-ghost text-xs disabled:opacity-30 px-3 py-2.5 min-h-[44px]"
       >
         Next
       </button>

@@ -8,26 +8,28 @@ function BarChart({ data, labelKey, valueKey, title }) {
   const max = data?.length ? Math.max(...data.map((d) => d[valueKey])) : 1;
 
   return (
-    <div className="card-flat p-5">
+    <div className="card-flat">
       <h3 className="section-title">{title}</h3>
       {!data?.length ? (
         <p className="text-xs text-ink-faint text-center py-8">No data yet</p>
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {data.slice(0, 8).map((item, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <span className="text-xs text-ink-muted dark:text-ink-dark-muted w-28 truncate flex-shrink-0">
+            <div key={i} className="space-y-1 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
+              <span className="text-xs text-ink-muted dark:text-ink-dark-muted sm:w-28 sm:truncate sm:flex-shrink-0 block">
                 {item[labelKey]}
               </span>
-              <div className="flex-1 h-1.5 bg-surface dark:bg-surface-dark-hover rounded-full overflow-hidden">
-                <div
-                  className="bg-ink dark:bg-ink-dark h-full rounded-full transition-all duration-500"
-                  style={{ width: `${(item[valueKey] / max) * 100}%` }}
-                />
+              <div className="flex items-center gap-2 sm:flex-1">
+                <div className="flex-1 h-1.5 bg-surface dark:bg-surface-dark-hover rounded-full overflow-hidden">
+                  <div
+                    className="bg-ink dark:bg-ink-dark h-full rounded-full transition-all duration-500"
+                    style={{ width: `${(item[valueKey] / max) * 100}%` }}
+                  />
+                </div>
+                <span className="text-xs text-ink-faint w-6 text-right tabular-nums flex-shrink-0">
+                  {item[valueKey]}
+                </span>
               </div>
-              <span className="text-xs text-ink-faint w-6 text-right tabular-nums">
-                {item[valueKey]}
-              </span>
             </div>
           ))}
         </div>
@@ -38,13 +40,13 @@ function BarChart({ data, labelKey, valueKey, title }) {
 
 function LineChart({ data, title }) {
   return (
-    <div className="card-flat p-5">
+    <div className="card-flat">
       <h3 className="section-title">{title}</h3>
       {!data?.length ? (
         <p className="text-xs text-ink-faint text-center py-8">No searches yet</p>
       ) : (
         <>
-          <svg viewBox="0 0 100 40" className="w-full h-24 mt-1" preserveAspectRatio="none">
+          <svg viewBox="0 0 100 40" className="w-full h-20 sm:h-24 mt-1" preserveAspectRatio="none">
             <polyline
               fill="none"
               stroke="currentColor"
@@ -59,9 +61,9 @@ function LineChart({ data, title }) {
               }).join(' ')}
             />
           </svg>
-          <div className="flex justify-between text-[10px] text-ink-faint mt-2">
-            <span>{formatChartDate(data[0]?.date)}</span>
-            <span>{formatChartDate(data[data.length - 1]?.date)}</span>
+          <div className="flex justify-between text-[10px] text-ink-faint mt-2 gap-2">
+            <span className="truncate">{formatChartDate(data[0]?.date)}</span>
+            <span className="truncate text-right">{formatChartDate(data[data.length - 1]?.date)}</span>
           </div>
         </>
       )}
@@ -71,9 +73,9 @@ function LineChart({ data, title }) {
 
 function ChartSkeleton() {
   return (
-    <div className="card-flat p-5">
+    <div className="card-flat">
       <div className="skeleton h-2.5 w-28 mb-5" />
-      <div className="skeleton h-24 w-full" />
+      <div className="skeleton h-20 sm:h-24 w-full" />
     </div>
   );
 }

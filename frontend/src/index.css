@@ -67,27 +67,31 @@
   .card-flat {
     @apply bg-surface dark:bg-surface-dark
            border border-line/60 dark:border-line-dark
-           rounded-xl;
+           rounded-xl p-4 sm:p-5;
+  }
+
+  .card-pad {
+    @apply p-4 sm:p-5 lg:p-6;
   }
 
   .page-shell {
-    @apply max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-12;
+    @apply max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
   }
 
   .page-header {
-    @apply mb-8 sm:mb-10;
+    @apply mb-6 sm:mb-8 lg:mb-10;
   }
 
   .page-title {
-    @apply text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-ink dark:text-ink-dark;
+    @apply text-xl sm:text-2xl lg:text-[1.75rem] font-semibold tracking-tight text-ink dark:text-ink-dark;
   }
 
   .page-subtitle {
-    @apply text-sm text-ink-muted dark:text-ink-dark-muted mt-1.5 max-w-xl leading-relaxed;
+    @apply text-sm text-ink-muted dark:text-ink-dark-muted mt-1 sm:mt-1.5 max-w-xl leading-relaxed;
   }
 
   .section-title {
-    @apply text-[13px] font-medium uppercase tracking-wide text-ink-muted dark:text-ink-dark-muted mb-4;
+    @apply text-[11px] sm:text-[13px] font-medium uppercase tracking-wide text-ink-muted dark:text-ink-dark-muted mb-3 sm:mb-4;
   }
 
   .nav-link {
@@ -126,11 +130,19 @@
   }
 
   .result-item {
-    @apply py-5 border-b border-line/70 dark:border-line-dark last:border-0;
+    @apply py-4 sm:py-5 border-b border-line/70 dark:border-line-dark last:border-0;
   }
 
   .empty-state {
-    @apply text-center py-14 px-6;
+    @apply text-center py-10 sm:py-14 px-4 sm:px-6;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .safe-bottom {
+    @apply pb-[env(safe-area-inset-bottom,0px)];
   }
 }
 
