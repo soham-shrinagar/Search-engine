@@ -7,11 +7,10 @@ import Pagination from './Pagination';
 
 function ResultSkeleton() {
   return (
-    <div className="card p-5 space-y-3">
+    <div className="result-item space-y-2.5">
       <div className="skeleton h-4 w-2/3" />
       <div className="skeleton h-3 w-1/3" />
       <div className="skeleton h-3 w-full" />
-      <div className="skeleton h-3 w-4/5" />
     </div>
   );
 }
@@ -36,8 +35,8 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   if (loading) {
     return (
-      <div className="space-y-3">
-        <p className="hint">Searching indexed pages…</p>
+      <div>
+        <p className="hint mb-4">Searching…</p>
         {[...Array(4)].map((_, i) => (
           <ResultSkeleton key={i} />
         ))}
@@ -47,16 +46,10 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   if (error) {
     return (
-      <div className="card p-10 text-center">
-        <p className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-2">
-          Search failed
-        </p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{error}</p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="btn-secondary text-sm mt-6"
-        >
+      <div className="card-flat empty-state">
+        <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">Search failed</p>
+        <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{error}</p>
+        <button type="button" onClick={() => window.location.reload()} className="btn-secondary text-sm mt-5">
           Try again
         </button>
       </div>
@@ -65,14 +58,14 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   if (!results || results.length === 0) {
     return (
-      <div className="card p-10 text-center">
-        <p className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-2">
+      <div className="card-flat empty-state">
+        <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">
           No results for &ldquo;{query}&rdquo;
         </p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm mx-auto">
-          Try different keywords, use phrase search with quotes, or crawl the page first.
+        <p className="text-sm text-ink-muted dark:text-ink-dark-muted max-w-xs mx-auto leading-relaxed">
+          Try different words, or crawl the page first.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+        <div className="flex gap-2 justify-center mt-6">
           <Link to="/crawl" className="btn-primary text-sm">Crawl a page</Link>
           <Link to="/" className="btn-secondary text-sm">New search</Link>
         </div>
@@ -82,13 +75,13 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-1 pb-4 border-b border-line/80 dark:border-line-dark">
         <p className="hint">
-          About {pagination.totalResults} results ({responseTime}ms) · ranked by TF-IDF relevance
+          {pagination.totalResults} results · {responseTime}ms
         </p>
         {isAuthenticated ? (
           <div className="flex items-center gap-2">
-            {saveError && <span className="text-xs text-neutral-500">{saveError}</span>}
+            {saveError && <span className="text-xs text-ink-muted">{saveError}</span>}
             <button
               type="button"
               onClick={handleSaveSearch}
@@ -99,12 +92,12 @@ export default function SearchResults({ results, loading, error, pagination, onP
             </button>
           </div>
         ) : (
-          <Link to="/login" state={{ from: '/search' }} className="text-xs text-neutral-400 hover:underline underline-offset-2">
-            Sign in to bookmark & save searches
+          <Link to="/login" state={{ from: '/search' }} className="link-subtle text-xs">
+            Sign in to save
           </Link>
         )}
       </div>
-      <div className="space-y-3">
+      <div>
         {results.map((result) => (
           <ResultCard key={result.id} result={result} />
         ))}

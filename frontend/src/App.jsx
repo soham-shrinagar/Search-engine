@@ -17,8 +17,8 @@ const Account = lazy(() => import('./pages/Account'));
 
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[40vh]">
-      <div className="w-5 h-5 border-2 border-neutral-950 dark:border-neutral-50 border-t-transparent rounded-full animate-spin" />
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="w-4 h-4 border-2 border-ink/20 dark:border-ink-dark/30 border-t-ink dark:border-t-ink-dark rounded-full animate-spin" />
     </div>
   );
 }
@@ -29,35 +29,37 @@ export default function App() {
       <AuthProvider>
         <BookmarkProvider>
           <BrowserRouter>
-            <Navbar />
-            <main>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/search" element={<SearchResultsPage />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/crawl" element={<CrawlManagement />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route
-                    path="/bookmarks"
-                    element={(
-                      <ProtectedRoute>
-                        <Bookmarks />
-                      </ProtectedRoute>
-                    )}
-                  />
-                  <Route
-                    path="/account"
-                    element={(
-                      <ProtectedRoute>
-                        <Account />
-                      </ProtectedRoute>
-                    )}
-                  />
-                </Routes>
-              </Suspense>
-            </main>
+            <div className="min-h-screen flex flex-col bg-page dark:bg-page-dark">
+              <Navbar />
+              <main className="flex-1">
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Landing />} />
+                    <Route path="/search" element={<SearchResultsPage />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/crawl" element={<CrawlManagement />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route
+                      path="/bookmarks"
+                      element={(
+                        <ProtectedRoute>
+                          <Bookmarks />
+                        </ProtectedRoute>
+                      )}
+                    />
+                    <Route
+                      path="/account"
+                      element={(
+                        <ProtectedRoute>
+                          <Account />
+                        </ProtectedRoute>
+                      )}
+                    />
+                  </Routes>
+                </Suspense>
+              </main>
+            </div>
           </BrowserRouter>
         </BookmarkProvider>
       </AuthProvider>

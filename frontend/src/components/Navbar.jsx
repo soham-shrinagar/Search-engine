@@ -26,24 +26,24 @@ export default function Navbar() {
   const visibleItems = navItems.filter((item) => !item.auth || isAuthenticated);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-line/80 dark:border-line-dark bg-page/80 dark:bg-page-dark/80 backdrop-blur-lg">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6 h-[3.25rem] flex items-center justify-between">
         <Link
           to="/"
-          className="text-[15px] font-semibold tracking-tight text-neutral-950 dark:text-neutral-50"
+          className="text-sm font-semibold tracking-tight text-ink dark:text-ink-dark"
           onClick={() => setMenuOpen(false)}
         >
           SearchSphere
         </Link>
 
-        <nav className="hidden sm:flex items-center gap-6">
+        <nav className="hidden sm:flex items-center gap-5">
           {visibleItems.map((item) => {
             const active = location.pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`text-sm transition-colors ${active ? 'nav-link-active' : 'nav-link'}`}
+                className={active ? 'nav-link-active text-sm' : 'nav-link'}
               >
                 {item.label}
               </Link>
@@ -51,8 +51,8 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <button onClick={toggleDarkMode} className="btn-ghost" aria-label="Toggle theme">
+        <div className="flex items-center gap-1">
+          <button onClick={toggleDarkMode} className="btn-ghost p-2" aria-label="Toggle theme">
             {darkMode ? (
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -66,24 +66,24 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <>
-              <span className="text-xs text-neutral-400 hidden md:inline max-w-[140px] truncate">
+              <span className="text-xs text-ink-faint dark:text-ink-dark-faint hidden md:inline max-w-[160px] truncate px-2">
                 {user.email}
               </span>
               <button onClick={handleLogout} className="btn-ghost text-xs hidden sm:inline-flex">
-                Logout
+                Log out
               </button>
             </>
           ) : location.pathname === '/' ? (
             <>
               <Link to="/login" className="btn-ghost text-sm hidden sm:inline-flex">Sign in</Link>
-              <Link to="/register" className="btn-primary text-sm py-2 px-4 hidden sm:inline-flex">Sign up</Link>
+              <Link to="/register" className="btn-primary text-sm py-1.5 px-3.5 hidden sm:inline-flex ml-1">Sign up</Link>
             </>
           ) : (
-            <Link to="/login" className="btn-primary text-sm py-2 px-4 hidden sm:inline-flex">Sign in</Link>
+            <Link to="/login" className="btn-primary text-sm py-1.5 px-3.5 hidden sm:inline-flex">Sign in</Link>
           )}
 
           <button
-            className="btn-ghost sm:hidden"
+            className="btn-ghost p-2 sm:hidden"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle menu"
           >
@@ -99,29 +99,31 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="sm:hidden border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-5 py-3 space-y-1">
+        <div className="sm:hidden border-t border-line/80 dark:border-line-dark bg-page dark:bg-page-dark px-5 py-2">
           {visibleItems.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               onClick={() => setMenuOpen(false)}
-              className={`block py-2 text-sm ${location.pathname === item.to ? 'font-medium text-neutral-950 dark:text-neutral-50' : 'text-neutral-500'}`}
+              className={`block py-2.5 text-sm ${location.pathname === item.to ? 'font-medium text-ink dark:text-ink-dark' : 'text-ink-muted dark:text-ink-dark-muted'}`}
             >
               {item.label}
             </Link>
           ))}
-          {isAuthenticated ? (
-            <button onClick={handleLogout} className="block py-2 text-sm text-neutral-500 w-full text-left">
-              Logout
-            </button>
-          ) : location.pathname === '/' ? (
-            <>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="block py-2 text-sm font-medium">Sign up</Link>
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2 text-sm text-neutral-500">Sign in</Link>
-            </>
-          ) : (
-            <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2 text-sm font-medium">Sign in</Link>
-          )}
+          <div className="border-t border-line/80 dark:border-line-dark mt-2 pt-2">
+            {isAuthenticated ? (
+              <button onClick={handleLogout} className="block py-2.5 text-sm text-ink-muted w-full text-left">
+                Log out
+              </button>
+            ) : location.pathname === '/' ? (
+              <div className="flex gap-3 py-2">
+                <Link to="/register" onClick={() => setMenuOpen(false)} className="btn-primary text-sm flex-1 text-center">Sign up</Link>
+                <Link to="/login" onClick={() => setMenuOpen(false)} className="btn-secondary text-sm flex-1 text-center">Sign in</Link>
+              </div>
+            ) : (
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="block py-2.5 text-sm font-medium">Sign in</Link>
+            )}
+          </div>
         </div>
       )}
     </header>

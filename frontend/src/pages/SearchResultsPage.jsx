@@ -66,23 +66,20 @@ export default function SearchResultsPage() {
   const hasQuery = query.trim().length > 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-5 py-8">
-      <div className="mb-6">
-        <Link
-          to="/"
-          className="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors mb-4 inline-block"
-        >
-          ← Back
+    <div className="max-w-2xl mx-auto px-5 sm:px-6 py-8 sm:py-10">
+      <div className="mb-8">
+        <Link to="/" className="link-subtle text-xs mb-4 inline-block">
+          ← Home
         </Link>
         <SearchBar initialQuery={query} />
       </div>
 
       {!hasQuery ? (
-        <div className="card p-10 text-center">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-            Type something above to search your added pages.
+        <div className="card-flat empty-state">
+          <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-4">
+            Enter a query above.
           </p>
-          <Link to="/crawl" className="btn-secondary text-sm">Add a page first</Link>
+          <Link to="/crawl" className="btn-secondary text-sm">Add pages first</Link>
         </div>
       ) : (
         <SearchResults

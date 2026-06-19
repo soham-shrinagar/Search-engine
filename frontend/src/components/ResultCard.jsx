@@ -24,35 +24,37 @@ export default function ResultCard({ result }) {
   };
 
   return (
-    <article className="card p-5 group">
-      <div className="flex items-start justify-between gap-4">
+    <article className="result-item group">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <a
             href={result.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[15px] font-medium text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2 block leading-snug"
+            className="text-[15px] font-medium text-ink dark:text-ink-dark hover:underline underline-offset-2 block leading-snug"
             dangerouslySetInnerHTML={{ __html: result.highlightedTitle || result.title }}
           />
-          <p className="text-xs text-neutral-400 dark:text-neutral-500 truncate mt-1">
+          <p className="text-xs text-ink-faint dark:text-ink-dark-faint truncate mt-0.5">
             {result.url}
           </p>
           <p
-            className="text-sm text-neutral-600 dark:text-neutral-400 mt-2.5 leading-relaxed"
+            className="text-sm text-ink-muted dark:text-ink-dark-muted mt-2 leading-relaxed line-clamp-3"
             dangerouslySetInnerHTML={{ __html: result.highlightedSnippet || result.snippet }}
           />
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
-            {result.score > 0 && (
-              <span className="badge" title="TF-IDF relevance score">
-                Score {result.score}
-              </span>
-            )}
-            {result.matchedTerms?.map((term) => (
-              <span key={term} className="badge">{term}</span>
-            ))}
-          </div>
+          {(result.score > 0 || result.matchedTerms?.length > 0) && (
+            <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+              {result.score > 0 && (
+                <span className="badge" title="Relevance score">
+                  {result.score}
+                </span>
+              )}
+              {result.matchedTerms?.map((term) => (
+                <span key={term} className="badge">{term}</span>
+              ))}
+            </div>
+          )}
           {bookmarkError && (
-            <p className="text-xs text-neutral-500 mt-2">{bookmarkError}</p>
+            <p className="text-xs text-ink-muted mt-2">{bookmarkError}</p>
           )}
         </div>
 
@@ -60,12 +62,14 @@ export default function ResultCard({ result }) {
           <button
             onClick={handleBookmark}
             disabled={bookmarkLoading}
-            title={bookmarked ? 'Remove bookmark' : 'Bookmark page'}
-            className="btn-ghost flex-shrink-0 sm:opacity-80"
+            title={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+            className={`btn-ghost flex-shrink-0 p-2 rounded-lg ${
+              bookmarked ? 'text-ink dark:text-ink-dark' : 'opacity-50 group-hover:opacity-100'
+            }`}
             aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark page'}
           >
             <svg
-              className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`}
+              className="w-4 h-4"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth="1.5"

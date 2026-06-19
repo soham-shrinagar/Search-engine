@@ -1,29 +1,31 @@
 function formatChartDate(dateStr) {
   if (!dateStr) return '';
   const [year, month, day] = String(dateStr).split('T')[0].split('-');
-  return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString();
+  return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 function BarChart({ data, labelKey, valueKey, title }) {
+  const max = data?.length ? Math.max(...data.map((d) => d[valueKey])) : 1;
+
   return (
-    <div className="card p-5">
+    <div className="card-flat p-5">
       <h3 className="section-title">{title}</h3>
       {!data?.length ? (
-        <p className="text-xs text-neutral-400 text-center py-10">No data yet — run some searches first.</p>
+        <p className="text-xs text-ink-faint text-center py-8">No data yet</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {data.slice(0, 8).map((item, i) => (
             <div key={i} className="flex items-center gap-3">
-              <span className="text-xs text-neutral-500 dark:text-neutral-400 w-32 truncate flex-shrink-0">
+              <span className="text-xs text-ink-muted dark:text-ink-dark-muted w-28 truncate flex-shrink-0">
                 {item[labelKey]}
               </span>
-              <div className="flex-1 bg-neutral-100 dark:bg-neutral-900 rounded-full h-2 overflow-hidden">
+              <div className="flex-1 h-1.5 bg-surface dark:bg-surface-dark-hover rounded-full overflow-hidden">
                 <div
-                  className="bg-neutral-950 dark:bg-neutral-50 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${(item[valueKey] / Math.max(...data.map((d) => d[valueKey]))) * 100}%` }}
+                  className="bg-ink dark:bg-ink-dark h-full rounded-full transition-all duration-500"
+                  style={{ width: `${(item[valueKey] / max) * 100}%` }}
                 />
               </div>
-              <span className="text-xs text-neutral-400 w-8 text-right tabular-nums">
+              <span className="text-xs text-ink-faint w-6 text-right tabular-nums">
                 {item[valueKey]}
               </span>
             </div>
@@ -36,26 +38,28 @@ function BarChart({ data, labelKey, valueKey, title }) {
 
 function LineChart({ data, title }) {
   return (
-    <div className="card p-5">
+    <div className="card-flat p-5">
       <h3 className="section-title">{title}</h3>
       {!data?.length ? (
-        <p className="text-xs text-neutral-400 text-center py-10">No searches recorded yet.</p>
+        <p className="text-xs text-ink-faint text-center py-8">No searches yet</p>
       ) : (
         <>
-          <svg viewBox="0 0 100 48" className="w-full h-28 mt-2" preserveAspectRatio="none">
+          <svg viewBox="0 0 100 40" className="w-full h-24 mt-1" preserveAspectRatio="none">
             <polyline
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
-              className="text-neutral-950 dark:text-neutral-50"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-ink dark:text-ink-dark"
               points={data.map((d, i) => {
                 const x = (i / (data.length - 1 || 1)) * 100;
-                const y = 48 - (d.count / (Math.max(...data.map((x) => x.count)) || 1)) * 48;
+                const y = 40 - (d.count / (Math.max(...data.map((x) => x.count)) || 1)) * 36;
                 return `${x},${y}`;
               }).join(' ')}
             />
           </svg>
-          <div className="flex justify-between text-[10px] text-neutral-400 mt-3">
+          <div className="flex justify-between text-[10px] text-ink-faint mt-2">
             <span>{formatChartDate(data[0]?.date)}</span>
             <span>{formatChartDate(data[data.length - 1]?.date)}</span>
           </div>
@@ -67,9 +71,9 @@ function LineChart({ data, title }) {
 
 function ChartSkeleton() {
   return (
-    <div className="card p-5">
-      <div className="skeleton h-3 w-32 mb-4" />
-      <div className="skeleton h-28 w-full" />
+    <div className="card-flat p-5">
+      <div className="skeleton h-2.5 w-28 mb-5" />
+      <div className="skeleton h-24 w-full" />
     </div>
   );
 }
@@ -86,12 +90,12 @@ export default function AnalyticsCharts({ searchesOverTime, topTerms, topDocumen
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <LineChart data={searchesOverTime} title="Searches over time" />
-      <BarChart data={topTerms} labelKey="query" valueKey="count" title="Top searched terms" />
+      <BarChart data={topTerms} labelKey="query" valueKey="count" title="Top queries" />
       <BarChart
         data={topDocuments?.map((d) => ({ query: d.title || d.url, count: d.bookmarkCount }))}
         labelKey="query"
         valueKey="count"
-        title="Most bookmarked pages"
+        title="Most bookmarked"
       />
     </div>
   );

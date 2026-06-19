@@ -37,44 +37,39 @@ export default function Account() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-10">
+    <div className="page-shell">
       <div className="page-header">
-        <h1 className="page-title">Your account</h1>
-        <p className="page-subtitle">Search history and saved queries — only visible to you.</p>
+        <h1 className="page-title">Account</h1>
+        <p className="page-subtitle">Your saved searches and history.</p>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         <Sidebar />
-        <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex-1 min-w-0 space-y-5">
           {loading ? (
             <div className="space-y-3">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="card p-4">
+                <div key={i} className="card-flat p-4">
                   <div className="skeleton h-4 w-3/4 mb-2" />
                   <div className="skeleton h-3 w-1/2" />
                 </div>
               ))}
             </div>
           ) : error ? (
-            <div className="card p-4 text-sm text-neutral-500">{error}</div>
+            <div className="card-flat p-4 text-sm text-ink-muted">{error}</div>
           ) : (
             <>
-              <section className="card p-5">
-                <h2 className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-1">
-                  Saved searches
-                </h2>
-                <p className="text-xs text-neutral-400 mb-4">
-                  Queries you saved from the search page.
-                </p>
+              <section className="card-flat p-5">
+                <h2 className="section-title">Saved searches</h2>
                 {saved.length === 0 ? (
-                  <p className="text-sm text-neutral-500">No saved searches yet.</p>
+                  <p className="text-sm text-ink-muted dark:text-ink-dark-muted">None yet.</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="divide-y divide-line/80 dark:divide-line-dark">
                     {saved.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between gap-3 py-2 border-b border-neutral-100 dark:border-neutral-800 last:border-0">
+                      <div key={item.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
                         <Link
                           to={`/search?q=${encodeURIComponent(item.query)}`}
-                          className="text-sm text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2 truncate"
+                          className="text-sm text-ink dark:text-ink-dark hover:underline underline-offset-2 truncate"
                         >
                           {item.query}
                         </Link>
@@ -90,26 +85,21 @@ export default function Account() {
                 )}
               </section>
 
-              <section className="card p-5">
-                <h2 className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-1">
-                  Search history
-                </h2>
-                <p className="text-xs text-neutral-400 mb-4">
-                  Recent queries from your signed-in searches.
-                </p>
+              <section className="card-flat p-5">
+                <h2 className="section-title">Search history</h2>
                 {history.length === 0 ? (
-                  <p className="text-sm text-neutral-500">No search history yet.</p>
+                  <p className="text-sm text-ink-muted dark:text-ink-dark-muted">None yet.</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="divide-y divide-line/80 dark:divide-line-dark">
                     {history.map((item) => (
-                      <div key={item.query} className="flex items-center justify-between gap-3 py-2 border-b border-neutral-100 dark:border-neutral-800 last:border-0">
+                      <div key={item.query} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
                         <Link
                           to={`/search?q=${encodeURIComponent(item.query)}`}
-                          className="text-sm text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2 truncate"
+                          className="text-sm text-ink dark:text-ink-dark hover:underline underline-offset-2 truncate"
                         >
                           {item.query}
                         </Link>
-                        <span className="text-xs text-neutral-400 flex-shrink-0">
+                        <span className="text-xs text-ink-faint flex-shrink-0 tabular-nums">
                           {item.search_count}×
                         </span>
                       </div>

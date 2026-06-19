@@ -67,37 +67,38 @@ export default function SearchBar({ initialQuery = '', large = false, onSearch }
 
   return (
     <div ref={wrapperRef} className="relative w-full">
-      <form onSubmit={handleSubmit} className="flex gap-3">
-        <div className="relative flex-1">
-          <input
-            type="text"
-            value={query}
-            onChange={handleChange}
-            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-            placeholder="Search indexed pages…"
-            className={`input-field w-full ${large ? 'py-3.5 text-base' : ''}`}
-            aria-label="Search query"
-          />
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className={`flex gap-2 ${large ? 'flex-col sm:flex-row' : ''}`}
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={handleChange}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+          placeholder="Search indexed pages…"
+          className={`input-field flex-1 ${large ? 'py-3 sm:py-3.5 text-[15px] rounded-xl' : ''}`}
+          aria-label="Search query"
+        />
         <button
           type="submit"
-          className={`btn-primary flex-shrink-0 ${large ? 'px-7' : ''}`}
+          className={`btn-primary flex-shrink-0 ${large ? 'sm:px-6 py-3 rounded-xl' : ''}`}
         >
           Search
         </button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-2 card-elevated overflow-hidden max-h-56 overflow-y-auto">
+        <ul className="absolute z-50 w-full mt-1.5 card overflow-hidden max-h-52 overflow-y-auto py-1">
           {suggestions.map((s) => (
             <li key={s.term}>
               <button
                 type="button"
                 onClick={() => handleSuggestionClick(s.term)}
-                className="w-full text-left px-4 py-2.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex justify-between gap-4"
+                className="w-full text-left px-3.5 py-2 text-sm hover:bg-surface dark:hover:bg-surface-dark-hover transition-colors flex justify-between gap-4"
               >
-                <span>{s.term}</span>
-                <span className="text-xs text-neutral-400">{s.documentFrequency}</span>
+                <span className="text-ink dark:text-ink-dark">{s.term}</span>
+                <span className="text-xs text-ink-faint tabular-nums">{s.documentFrequency}</span>
               </button>
             </li>
           ))}

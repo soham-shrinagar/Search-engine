@@ -35,50 +35,48 @@ export default function Bookmarks() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-10">
+    <div className="page-shell">
       <div className="page-header">
         <h1 className="page-title">Bookmarks</h1>
-        <p className="page-subtitle">Pages you&apos;ve saved from search results.</p>
+        <p className="page-subtitle">Pages saved from search results.</p>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         <Sidebar />
         <div className="flex-1 min-w-0">
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="card p-4">
+                <div key={i} className="card-flat p-4">
                   <div className="skeleton h-4 w-3/4 mb-2" />
                   <div className="skeleton h-3 w-1/2" />
                 </div>
               ))}
             </div>
           ) : error ? (
-            <div className="card p-4 text-sm text-neutral-500">{error}</div>
+            <div className="card-flat p-4 text-sm text-ink-muted">{error}</div>
           ) : bookmarks.length === 0 ? (
-            <div className="card p-10 text-center">
-              <p className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-2">
-                No bookmarks yet
+            <div className="card-flat empty-state">
+              <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">No bookmarks</p>
+              <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-6 max-w-xs mx-auto">
+                Search for something and tap the bookmark icon on a result.
               </p>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                Search for something, then click the bookmark icon on any result to save it here.
-              </p>
-              <Link to="/" className="btn-primary text-sm">Go to search</Link>
+              <Link to="/" className="btn-primary text-sm">Search</Link>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="card-flat divide-y divide-line/80 dark:divide-line-dark">
               {bookmarks.map((bookmark) => (
-                <div key={bookmark.id} className="card p-4 flex items-center justify-between gap-4">
+                <div key={bookmark.id} className="p-4 flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <a
                       href={bookmark.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-medium text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2 block truncate"
+                      className="text-sm font-medium text-ink dark:text-ink-dark hover:underline underline-offset-2 block truncate"
                     >
                       {bookmark.title || bookmark.url}
                     </a>
-                    <p className="text-xs text-neutral-400 truncate mt-0.5">{bookmark.url}</p>
+                    <p className="text-xs text-ink-faint truncate mt-0.5">{bookmark.url}</p>
                   </div>
                   <button
                     onClick={() => handleRemove(bookmark.page_id)}

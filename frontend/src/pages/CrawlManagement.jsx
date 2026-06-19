@@ -68,10 +68,10 @@ export default function CrawlManagement() {
       if (recursive) {
         const { summary } = data.data;
         setSubmitSuccess(
-          `Crawl complete — ${summary.indexed} indexed, ${summary.skipped} skipped, ${summary.failed} failed.`
+          `Done — ${summary.indexed} indexed, ${summary.skipped} skipped, ${summary.failed} failed.`
         );
       } else {
-        setSubmitSuccess(`Indexed "${data.data.title || data.data.url}" successfully.`);
+        setSubmitSuccess(`Indexed "${data.data.title || data.data.url}".`);
       }
       setUrl('');
       loadData();
@@ -83,23 +83,21 @@ export default function CrawlManagement() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-10">
+    <div className="page-shell">
       <div className="page-header">
-        <h1 className="page-title">Crawl Management</h1>
-        <p className="page-subtitle">
-          Submit URLs, crawl recursively, and manage your indexed pages.
-        </p>
+        <h1 className="page-title">Crawl</h1>
+        <p className="page-subtitle">Add URLs to your search index.</p>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         <Sidebar />
         <div className="flex-1 min-w-0 space-y-6">
-          <div className="card p-5">
-            <h2 className="section-title">Submit URL for crawling</h2>
+          <div className="card-flat p-5 sm:p-6">
+            <h2 className="section-title">Add URL</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="crawl-url" className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5">
-                  Website URL
+                <label htmlFor="crawl-url" className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
+                  URL
                 </label>
                 <input
                   id="crawl-url"
@@ -112,28 +110,28 @@ export default function CrawlManagement() {
                 />
               </div>
 
-              <div className="flex flex-wrap gap-x-6 gap-y-3 items-center text-sm text-neutral-600 dark:text-neutral-400">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex flex-wrap gap-x-5 gap-y-2 items-center text-sm text-ink-muted dark:text-ink-dark-muted">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={recursive}
                     onChange={(e) => setRecursive(e.target.checked)}
-                    className="rounded border-neutral-300 dark:border-neutral-700"
+                    className="rounded border-line dark:border-line-dark text-ink focus:ring-ink/20"
                   />
-                  Recursive crawl (follow links)
+                  Follow links
                 </label>
 
                 {recursive && (
                   <>
                     <label className="flex items-center gap-2">
-                      Max depth
+                      Depth
                       <input
                         type="number"
                         value={maxDepth}
                         onChange={handleDepthChange}
                         min={1}
                         max={5}
-                        className="input-field w-16 py-1.5 text-center"
+                        className="input-field w-14 py-1.5 text-center text-sm"
                       />
                     </label>
                     <label className="flex items-center gap-2">
@@ -144,51 +142,47 @@ export default function CrawlManagement() {
                         onChange={handleMaxPagesChange}
                         min={1}
                         max={100}
-                        className="input-field w-16 py-1.5 text-center"
+                        className="input-field w-16 py-1.5 text-center text-sm"
                       />
                     </label>
                   </>
                 )}
               </div>
 
-              <p className="hint">
-                Supports robots.txt, duplicate detection via content hash, and automatic retries.
-              </p>
-
               {submitError && (
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">{submitError}</p>
+                <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{submitError}</p>
               )}
               {submitSuccess && (
-                <div className="card p-4 bg-neutral-50 dark:bg-neutral-900">
-                  <p className="text-sm text-neutral-950 dark:text-neutral-50">{submitSuccess}</p>
-                  <Link to="/" className="btn-primary text-sm mt-3 inline-flex">Search now</Link>
+                <div className="rounded-lg bg-surface dark:bg-surface-dark-hover border border-line/60 dark:border-line-dark px-4 py-3">
+                  <p className="text-sm text-ink dark:text-ink-dark">{submitSuccess}</p>
+                  <Link to="/" className="btn-primary text-xs mt-3 inline-flex px-3 py-1.5">Search now</Link>
                 </div>
               )}
 
               <button type="submit" disabled={submitting} className="btn-primary">
-                {submitting ? 'Crawling…' : 'Submit URL'}
+                {submitting ? 'Crawling…' : 'Submit'}
               </button>
             </form>
           </div>
 
           {loadError && (
-            <div className="card p-4 text-sm text-neutral-500">
-              Could not load crawl data — {loadError}
+            <div className="card-flat px-4 py-3 text-sm text-ink-muted">
+              Couldn&apos;t load data — {loadError}
             </div>
           )}
 
-          <div className="card p-5">
+          <div className="card-flat p-5">
             <h2 className="section-title">Indexed pages</h2>
             <CrawlTable
               data={pages}
               loading={loading}
-              emptyMessage="No pages crawled yet. Submit a URL above."
+              emptyMessage="Nothing indexed yet."
             />
           </div>
 
-          <div className="card p-5">
-            <h2 className="section-title">Crawl history</h2>
-            <CrawlTable data={history} loading={loading} emptyMessage="No crawl history yet." />
+          <div className="card-flat p-5">
+            <h2 className="section-title">History</h2>
+            <CrawlTable data={history} loading={loading} emptyMessage="No history yet." />
           </div>
         </div>
       </div>

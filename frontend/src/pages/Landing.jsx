@@ -5,24 +5,9 @@ import GettingStarted from '../components/GettingStarted';
 import { crawlApi } from '../api/client';
 
 const features = [
-  {
-    title: 'Crawl',
-    desc: 'Paste a URL and pull pages into your index.',
-    link: '/crawl',
-    linkLabel: 'Add pages',
-  },
-  {
-    title: 'Index',
-    desc: 'See what got indexed and how it ranks.',
-    link: '/dashboard',
-    linkLabel: 'Dashboard',
-  },
-  {
-    title: 'Search',
-    desc: 'Look up anything you\'ve crawled.',
-    link: '/search',
-    linkLabel: 'Search',
-  },
+  { title: 'Crawl', desc: 'Add URLs to your index', link: '/crawl' },
+  { title: 'Dashboard', desc: 'Stats and crawl history', link: '/dashboard' },
+  { title: 'Search', desc: 'Query what you indexed', link: '/search' },
 ];
 
 export default function Landing() {
@@ -35,49 +20,46 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto px-5 pt-14 pb-20">
+    <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-16 sm:pt-24 pb-20">
       <div className="text-center mb-10">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 mb-3">
+        <h1 className="text-[2.5rem] sm:text-5xl font-semibold tracking-tight text-ink dark:text-ink-dark leading-none">
           SearchSphere
         </h1>
-        <p className="text-neutral-500 dark:text-neutral-400 text-[15px] leading-relaxed max-w-md mx-auto">
-          Crawl pages, build a search index, find stuff fast.
+        <p className="text-ink-muted dark:text-ink-dark-muted text-[15px] mt-4 leading-relaxed">
+          Crawl pages, build an index, search what you added.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
-          <Link to="/register" className="btn-primary text-sm px-6">Sign up</Link>
-          <Link to="/login" className="btn-secondary text-sm px-6">Sign in</Link>
+        <div className="flex items-center justify-center gap-2 mt-7">
+          <Link to="/register" className="btn-primary px-5">Sign up</Link>
+          <Link to="/login" className="btn-secondary px-5">Sign in</Link>
         </div>
       </div>
 
       <SearchBar large />
 
       <p className="hint text-center mt-3">
-        Only searches pages you&apos;ve added.{' '}
-        <Link to="/crawl" className="underline underline-offset-2 hover:text-neutral-700 dark:hover:text-neutral-300">
-          Crawl something first
-        </Link>
+        Only searches pages you&apos;ve crawled.{' '}
+        <Link to="/crawl" className="link-subtle">Add some first</Link>
       </p>
 
       {hasPages !== null && <GettingStarted hasPages={hasPages} />}
 
-      <div className="mt-12 grid gap-3 sm:grid-cols-3">
-        {features.map((feature) => (
-          <Link
-            key={feature.title}
-            to={feature.link}
-            className="card p-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
-          >
-            <h3 className="text-sm font-medium text-neutral-950 dark:text-neutral-50 mb-1">
-              {feature.title}
-            </h3>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              {feature.desc}
-            </p>
-            <span className="text-xs text-neutral-400 mt-3 inline-block">
-              {feature.linkLabel} →
-            </span>
-          </Link>
-        ))}
+      <div className="mt-16 pt-8 border-t border-line/80 dark:border-line-dark">
+        <div className="grid gap-px sm:grid-cols-3 bg-line/80 dark:bg-line-dark rounded-xl overflow-hidden">
+          {features.map((feature) => (
+            <Link
+              key={feature.title}
+              to={feature.link}
+              className="bg-page dark:bg-page-dark p-5 hover:bg-surface dark:hover:bg-surface-dark transition-colors group"
+            >
+              <p className="text-sm font-medium text-ink dark:text-ink-dark group-hover:underline underline-offset-2">
+                {feature.title}
+              </p>
+              <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-1">
+                {feature.desc}
+              </p>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

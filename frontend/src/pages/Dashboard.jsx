@@ -74,25 +74,23 @@ export default function Dashboard() {
   const hasAnyError = Object.keys(sectionErrors).length > 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-10">
+    <div className="page-shell">
       <div className="page-header">
-        <h1 className="page-title">Analytics Dashboard</h1>
-        <p className="page-subtitle">
-          Index health, search activity, crawl performance, and usage trends.
-        </p>
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-subtitle">Index stats, search activity, and crawl logs.</p>
       </div>
 
       {hasAnyError && (
-        <div className="card p-4 mb-6 text-sm text-neutral-500">
-          Some sections failed to load. Showing available data.
+        <div className="card-flat px-4 py-3 mb-6 text-sm text-ink-muted dark:text-ink-dark-muted">
+          Some sections couldn&apos;t load. Showing what&apos;s available.
         </div>
       )}
 
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         <Sidebar />
         <div className="flex-1 min-w-0 space-y-6">
           {sectionErrors.metrics ? (
-            <div className="card p-4 text-sm text-neutral-500">Metrics unavailable</div>
+            <div className="card-flat p-4 text-sm text-ink-muted">Metrics unavailable</div>
           ) : (
             <DashboardCards metrics={metrics} loading={loading} />
           )}
@@ -104,24 +102,24 @@ export default function Dashboard() {
             loading={loading}
           />
 
-          <div className="card p-5">
-            <h2 className="section-title">Recent crawl history</h2>
+          <div className="card-flat p-5">
+            <h2 className="section-title">Recent crawls</h2>
             {sectionErrors.history ? (
-              <p className="text-sm text-neutral-500">Could not load crawl history</p>
+              <p className="text-sm text-ink-muted">Couldn&apos;t load history</p>
             ) : (
-              <CrawlTable data={crawlHistory} loading={loading} emptyMessage="No crawls yet — add a page from the Crawl tab." />
+              <CrawlTable data={crawlHistory} loading={loading} emptyMessage="No crawls yet." />
             )}
           </div>
 
-          <div className="card p-5">
-            <h2 className="section-title">Recent errors</h2>
+          <div className="card-flat p-5">
+            <h2 className="section-title">Errors</h2>
             {sectionErrors.errorLog ? (
-              <p className="text-sm text-neutral-500">Could not load errors</p>
+              <p className="text-sm text-ink-muted">Couldn&apos;t load errors</p>
             ) : (
               <CrawlTable
                 data={errors.map((e) => ({ ...e, status: 'failed' }))}
                 loading={loading}
-                emptyMessage="No crawl errors — looking good."
+                emptyMessage="No errors."
               />
             )}
           </div>

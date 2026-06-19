@@ -24,7 +24,7 @@ export default function OtpAuthForm({
     try {
       await sendOtp(email);
       setStep('otp');
-      setMessage('Check your email for a 6-digit code. In development, check the server console.');
+      setMessage('Check your inbox for a 6-digit code.');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -51,7 +51,7 @@ export default function OtpAuthForm({
     setError(null);
     try {
       await sendOtp(email);
-      setMessage('A new code has been sent.');
+      setMessage('New code sent.');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -63,14 +63,14 @@ export default function OtpAuthForm({
     <>
       <div className="text-center mb-8">
         <h1 className="page-title">{title}</h1>
-        <p className="page-subtitle">{subtitle}</p>
+        <p className="page-subtitle mx-auto">{subtitle}</p>
       </div>
 
-      <div className="card p-6">
+      <div className="card-flat p-6 sm:p-7">
         {step === 'email' ? (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5">
+              <label className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
                 Email
               </label>
               <input
@@ -83,19 +83,19 @@ export default function OtpAuthForm({
                 placeholder="you@example.com"
               />
             </div>
-            {error && <p className="text-sm text-neutral-600 dark:text-neutral-400">{error}</p>}
-            <button type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? 'Sending code…' : purpose === 'signup' ? 'Send verification code' : 'Send sign-in code'}
+            {error && <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{error}</p>}
+            <button type="submit" disabled={loading} className="btn-primary w-full py-2.5">
+              {loading ? 'Sending…' : purpose === 'signup' ? 'Send code' : 'Send sign-in code'}
             </button>
           </form>
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              Code sent to <span className="text-neutral-950 dark:text-neutral-50">{email}</span>
+            <p className="text-sm text-ink-muted dark:text-ink-dark-muted">
+              Sent to <span className="text-ink dark:text-ink-dark">{email}</span>
             </p>
             <div>
-              <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5">
-                Verification code
+              <label className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
+                Code
               </label>
               <input
                 type="text"
@@ -104,22 +104,22 @@ export default function OtpAuthForm({
                 maxLength={6}
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="input-field text-center tracking-[0.3em] text-lg"
+                className="input-field text-center tracking-[0.35em] text-lg font-medium"
                 required
                 autoComplete="one-time-code"
                 placeholder="000000"
               />
             </div>
-            {message && <p className="text-sm text-neutral-500 dark:text-neutral-400">{message}</p>}
-            {error && <p className="text-sm text-neutral-600 dark:text-neutral-400">{error}</p>}
-            <button type="submit" disabled={loading || code.length !== 6} className="btn-primary w-full">
+            {message && <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{message}</p>}
+            {error && <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{error}</p>}
+            <button type="submit" disabled={loading || code.length !== 6} className="btn-primary w-full py-2.5">
               {loading ? 'Verifying…' : purpose === 'signup' ? 'Create account' : 'Sign in'}
             </button>
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between text-xs pt-1">
               <button
                 type="button"
                 onClick={() => { setStep('email'); setCode(''); setError(null); setMessage(null); }}
-                className="text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50"
+                className="text-ink-faint hover:text-ink dark:hover:text-ink-dark"
               >
                 Change email
               </button>
@@ -127,9 +127,9 @@ export default function OtpAuthForm({
                 type="button"
                 onClick={handleResend}
                 disabled={loading}
-                className="text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50"
+                className="text-ink-faint hover:text-ink dark:hover:text-ink-dark"
               >
-                Resend code
+                Resend
               </button>
             </div>
           </form>

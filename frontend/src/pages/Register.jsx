@@ -10,22 +10,18 @@ export default function Register() {
   const redirectTo = location.state?.from || '/';
 
   return (
-    <PageLayout maxWidth="max-w-sm">
+    <PageLayout>
       <OtpAuthForm
-        title="Create account"
-        subtitle="Verify your email to unlock bookmarks, saved searches, and history."
+        title="Sign up"
+        subtitle="Verify your email to save bookmarks and searches."
         purpose="signup"
         sendOtp={sendSignupOtp}
         verifyOtp={verifySignupOtp}
         onSuccess={() => navigate(redirectTo)}
         alternateLink={(
-          <p className="text-center text-sm text-neutral-400 mt-5">
-            Already have an account?{' '}
-            <Link
-              to="/login"
-              state={{ from: redirectTo }}
-              className="text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2"
-            >
+          <p className="text-center text-sm text-ink-faint mt-6">
+            Have an account?{' '}
+            <Link to="/login" state={{ from: redirectTo }} className="link-subtle">
               Sign in
             </Link>
           </p>

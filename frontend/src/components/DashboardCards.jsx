@@ -1,12 +1,14 @@
 function MetricCard({ title, value, subtitle }) {
   return (
-    <div className="card p-5">
-      <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">{title}</p>
-      <p className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+    <div className="card-flat p-4 sm:p-5">
+      <p className="text-[11px] uppercase tracking-wide text-ink-faint dark:text-ink-dark-faint mb-2">
+        {title}
+      </p>
+      <p className="text-xl sm:text-2xl font-semibold tracking-tight text-ink dark:text-ink-dark tabular-nums">
         {value ?? '—'}
       </p>
       {subtitle && (
-        <p className="text-xs text-neutral-400 mt-1">{subtitle}</p>
+        <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-1">{subtitle}</p>
       )}
     </div>
   );
@@ -14,9 +16,9 @@ function MetricCard({ title, value, subtitle }) {
 
 function CardSkeleton() {
   return (
-    <div className="card p-5 space-y-3">
-      <div className="skeleton h-3 w-24" />
-      <div className="skeleton h-8 w-16" />
+    <div className="card-flat p-5 space-y-3">
+      <div className="skeleton h-2.5 w-20" />
+      <div className="skeleton h-7 w-14" />
     </div>
   );
 }
@@ -33,14 +35,14 @@ export default function DashboardCards({ metrics, loading }) {
   if (!metrics) return null;
 
   const cards = [
-    { title: 'Indexed pages', value: metrics.totalIndexedPages, subtitle: 'Ready to search' },
-    { title: 'Total terms', value: metrics.totalTerms, subtitle: 'In the index' },
-    { title: 'Total searches', value: metrics.totalSearches, subtitle: 'All time' },
-    { title: 'Avg response time', value: `${metrics.avgResponseTime}ms`, subtitle: 'Search latency' },
-    { title: 'Crawl success rate', value: `${metrics.crawlSuccessRate}%`, subtitle: 'Successful crawls' },
-    { title: 'Crawl failure rate', value: `${metrics.crawlFailureRate}%`, subtitle: 'Failed crawls' },
-    { title: 'Total pages', value: metrics.totalPages, subtitle: 'Submitted URLs' },
-    { title: 'Index postings', value: metrics.totalPostings, subtitle: 'Term-document pairs' },
+    { title: 'Indexed', value: metrics.totalIndexedPages, subtitle: 'searchable pages' },
+    { title: 'Terms', value: metrics.totalTerms, subtitle: 'in index' },
+    { title: 'Searches', value: metrics.totalSearches, subtitle: 'all time' },
+    { title: 'Latency', value: `${metrics.avgResponseTime}ms`, subtitle: 'avg response' },
+    { title: 'Crawl OK', value: `${metrics.crawlSuccessRate}%`, subtitle: 'success rate' },
+    { title: 'Crawl fail', value: `${metrics.crawlFailureRate}%`, subtitle: 'failure rate' },
+    { title: 'Pages', value: metrics.totalPages, subtitle: 'submitted' },
+    { title: 'Postings', value: metrics.totalPostings, subtitle: 'term-doc pairs' },
   ];
 
   return (

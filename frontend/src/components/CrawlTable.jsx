@@ -18,7 +18,7 @@ function StatusBadge({ status }) {
         isActive
           ? 'badge-active'
           : isFailed
-            ? 'text-neutral-950 dark:text-neutral-50 border-neutral-950 dark:border-neutral-50'
+            ? 'text-ink dark:text-ink-dark border-ink/30 dark:border-ink-dark/30'
             : ''
       }`}
     >
@@ -31,18 +31,18 @@ function TableSkeleton() {
   return (
     <div className="space-y-2">
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="skeleton h-10 w-full" />
+        <div key={i} className="skeleton h-9 w-full" />
       ))}
     </div>
   );
 }
 
-export default function CrawlTable({ data, loading, emptyMessage = 'No crawl data available' }) {
+export default function CrawlTable({ data, loading, emptyMessage = 'No data' }) {
   if (loading) return <TableSkeleton />;
 
   if (!data?.length) {
     return (
-      <p className="text-sm text-neutral-400 text-center py-8">{emptyMessage}</p>
+      <p className="text-sm text-ink-faint text-center py-10">{emptyMessage}</p>
     );
   }
 
@@ -50,25 +50,25 @@ export default function CrawlTable({ data, loading, emptyMessage = 'No crawl dat
     <div className="overflow-x-auto -mx-1">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-neutral-100 dark:border-neutral-900">
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">URL</th>
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">Status</th>
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400 hidden md:table-cell">Error</th>
-            <th className="text-left py-2.5 px-3 text-xs font-medium text-neutral-400">Date</th>
+          <tr className="border-b border-line dark:border-line-dark">
+            <th className="text-left py-2 px-3 text-[11px] font-medium uppercase tracking-wide text-ink-faint">URL</th>
+            <th className="text-left py-2 px-3 text-[11px] font-medium uppercase tracking-wide text-ink-faint">Status</th>
+            <th className="text-left py-2 px-3 text-[11px] font-medium uppercase tracking-wide text-ink-faint hidden md:table-cell">Error</th>
+            <th className="text-left py-2 px-3 text-[11px] font-medium uppercase tracking-wide text-ink-faint">Date</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row) => (
             <tr
               key={row.id}
-              className="border-b border-neutral-50 dark:border-neutral-900/50 last:border-0 hover:bg-neutral-50 dark:hover:bg-neutral-900/30 transition-colors"
+              className="border-b border-line/50 dark:border-line-dark/80 last:border-0 hover:bg-surface/50 dark:hover:bg-surface-dark/50 transition-colors"
             >
               <td className="py-2.5 px-3 max-w-xs">
                 <a
                   href={row.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-950 dark:text-neutral-50 hover:underline underline-offset-2 truncate block text-[13px]"
+                  className="text-ink dark:text-ink-dark hover:underline underline-offset-2 truncate block text-[13px]"
                 >
                   {row.title || row.url}
                 </a>
@@ -76,11 +76,11 @@ export default function CrawlTable({ data, loading, emptyMessage = 'No crawl dat
               <td className="py-2.5 px-3">
                 <StatusBadge status={row.status || row.crawl_status} />
               </td>
-              <td className="py-2.5 px-3 text-xs text-neutral-400 hidden md:table-cell max-w-xs truncate">
+              <td className="py-2.5 px-3 text-xs text-ink-faint hidden md:table-cell max-w-xs truncate">
                 {row.error_message || '—'}
               </td>
-              <td className="py-2.5 px-3 text-xs text-neutral-400 whitespace-nowrap tabular-nums">
-                {new Date(row.crawled_at || row.last_crawled_at || row.created_at).toLocaleString()}
+              <td className="py-2.5 px-3 text-xs text-ink-faint whitespace-nowrap tabular-nums">
+                {new Date(row.crawled_at || row.last_crawled_at || row.created_at).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
               </td>
             </tr>
           ))}
