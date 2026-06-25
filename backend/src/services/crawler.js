@@ -192,6 +192,8 @@ async function crawlRecursive(startUrl, options = {}) {
     maxDepth = DEFAULT_MAX_DEPTH,
     maxPages = DEFAULT_MAX_PAGES,
     sameDomainOnly = true,
+    delayMs = 0,
+    shouldContinue = null,
   } = options;
 
   const startDomain = new URL(startUrl).hostname;
@@ -201,6 +203,11 @@ async function crawlRecursive(startUrl, options = {}) {
   let successCount = 0;
 
   while (queue.length > 0 && successCount < maxPages) {
+    if (shouldContinue) {
+      const ok = await shouldContinue();
+      if (!ok) break;
+    }
+
     const { url, depth } = queue.shift();
 
     if (visited.has(url)) continue;
@@ -228,6 +235,10 @@ async function crawlRecursive(startUrl, options = {}) {
       }
     } catch (err) {
       results.push({ url, status: 'failed', error: err.message });
+    }
+
+    if (delayMs > 0) {
+      await new Promise((r) => setTimeout(r, delayMs));
     }
   }
 

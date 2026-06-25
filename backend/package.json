@@ -7,6 +7,9 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "migrate": "node src/db/migrate.js",
+    "db:clear": "node src/db/clear.js",
+    "db:size": "node -e \"require('dotenv').config(); require('./src/db/storage').getStorageStats().then(s=>{console.log(require('./src/db/storage').formatStorageLine(s)); require('./src/config/database').pool.end()})\"",
+    "seed": "node src/db/seed.js",
     "test": "node --test src/**/*.test.js"
   },
   "engines": {

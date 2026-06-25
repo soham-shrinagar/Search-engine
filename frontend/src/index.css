@@ -144,9 +144,73 @@
   .safe-bottom {
     @apply pb-[env(safe-area-inset-bottom,0px)];
   }
+
+  .animate-fade-in {
+    animation: fadeIn 0.35s ease-out both;
+  }
+
+  .info-banner {
+    @apply card-flat border-ink/10 dark:border-ink-dark/10 bg-surface/80 dark:bg-surface-dark/80;
+  }
+
+  .workflow-card {
+    @apply card-flat text-center sm:text-left flex flex-col items-center sm:items-start;
+  }
+
+  .workflow-step-num {
+    @apply inline-flex w-7 h-7 items-center justify-center rounded-full
+           bg-ink text-page dark:bg-ink-dark dark:text-page-dark
+           text-xs font-semibold;
+  }
+
+  .pipeline-list {
+    @apply list-none m-0 p-0;
+  }
+
+  .pipeline-item {
+    @apply flex gap-3;
+  }
+
+  .pipeline-marker {
+    @apply relative flex flex-col items-center flex-shrink-0 w-3 pt-1.5;
+  }
+
+  .pipeline-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-ink dark:bg-ink-dark flex-shrink-0;
+  }
+
+  .pipeline-line {
+    @apply w-px flex-1 bg-line dark:bg-line-dark mt-1 min-h-[1.5rem];
+  }
+
+  .result-card {
+    @apply py-4 sm:py-5 px-2 -mx-2 rounded-xl border-b border-line/70 dark:border-line-dark last:border-0
+           transition-all duration-200
+           hover:bg-surface/60 dark:hover:bg-surface-dark/40 hover:shadow-soft dark:hover:shadow-card-dark;
+  }
+
+  .badge-key {
+    @apply inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium
+           bg-ink/5 border border-ink/15 text-ink dark:bg-ink-dark/10 dark:border-ink-dark/20 dark:text-ink-dark;
+  }
+
+  .success-panel {
+    @apply rounded-lg bg-surface dark:bg-surface-dark-hover border border-line/60 dark:border-line-dark px-4 py-4;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 mark {
-  @apply bg-surface text-inherit px-0.5 rounded-sm font-medium
-         dark:bg-surface-dark-hover;
+  @apply bg-amber-100/90 text-inherit px-1 py-0.5 rounded font-semibold
+         dark:bg-amber-500/25 dark:text-ink-dark;
 }

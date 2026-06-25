@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AppPageLayout from '../components/AppPageLayout';
 import CrawlTable from '../components/CrawlTable';
+import CrawlPipeline from '../components/CrawlPipeline';
+import EmptyState from '../components/EmptyState';
 import { crawlApi } from '../api/client';
 
 export default function CrawlManagement() {
@@ -11,7 +13,7 @@ export default function CrawlManagement() {
   const [maxPages, setMaxPages] = useState(50);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [submitSuccess, setSubmitSuccess] = useState(null);
+  const [lastSuccess, setLastSuccess] = useState(null);
   const [pages, setPages] = useState([]);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +56,8 @@ export default function CrawlManagement() {
 
     setSubmitting(true);
     setSubmitError(null);
-    setSubmitSuccess(null);
+    setLastSuccess(null);
+    const startTime = Date.now();
 
     try {
       const { data } = await crawlApi.submit({
@@ -65,13 +68,27 @@ export default function CrawlManagement() {
         sameDomainOnly: true,
       });
 
+      const elapsed = Date.now() - startTime;
+
       if (recursive) {
-        const { summary } = data.data;
-        setSubmitSuccess(
-          `Done — ${summary.indexed} indexed, ${summary.skipped} skipped, ${summary.failed} failed.`
-        );
+        const { summary, results } = data.data;
+        const firstIndexed = results?.find((r) => r.title && r.status === 'indexed');
+        setLastSuccess({
+          recursive: true,
+          summary,
+          title: firstIndexed?.title || url.trim(),
+          url: url.trim(),
+          elapsed,
+        });
       } else {
-        setSubmitSuccess(`Indexed "${data.data.title || data.data.url}".`);
+        setLastSuccess({
+          recursive: false,
+          title: data.data.title || url.trim(),
+          url: data.data.url || url.trim(),
+          termCount: data.data.termCount,
+          status: data.data.status,
+          elapsed,
+        });
       }
       setUrl('');
       loadData();
@@ -82,15 +99,28 @@ export default function CrawlManagement() {
     }
   };
 
+  const formatElapsed = (ms) => {
+    if (ms < 1000) return `${ms}ms`;
+    return `${(ms / 1000).toFixed(1)}s`;
+  };
+
   return (
-    <AppPageLayout title="Crawl" subtitle="Add URLs to your search index.">
+    <AppPageLayout
+      title="Index Website"
+      subtitle="Add webpages to your search index. Crawling must happen before search — this is where your searchable content comes from."
+    >
       <div className="space-y-4 sm:space-y-6">
+        <CrawlPipeline />
+
         <div className="card-flat">
-          <h2 className="section-title">Add URL</h2>
+          <h2 className="text-sm font-medium text-ink dark:text-ink-dark mb-1">Index a website</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">
+            Paste a URL below. SearchSphere will crawl it and add the content to your index.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="crawl-url" className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
-                URL
+                Website URL
               </label>
               <input
                 id="crawl-url"
@@ -111,13 +141,13 @@ export default function CrawlManagement() {
                   onChange={(e) => setRecursive(e.target.checked)}
                   className="rounded border-line dark:border-line-dark text-ink focus:ring-ink/20 w-4 h-4"
                 />
-                Follow links
+                Follow links on the same site
               </label>
 
               {recursive && (
                 <div className="flex flex-wrap gap-3 sm:gap-5">
                   <label className="flex items-center gap-2 min-h-[44px] sm:min-h-0">
-                    Depth
+                    Link depth
                     <input
                       type="number"
                       value={maxDepth}
@@ -145,15 +175,57 @@ export default function CrawlManagement() {
             {submitError && (
               <p className="text-sm text-ink-muted dark:text-ink-dark-muted break-words">{submitError}</p>
             )}
-            {submitSuccess && (
-              <div className="rounded-lg bg-surface dark:bg-surface-dark-hover border border-line/60 dark:border-line-dark px-4 py-3">
-                <p className="text-sm text-ink dark:text-ink-dark break-words">{submitSuccess}</p>
-                <Link to="/" className="btn-primary text-xs mt-3 inline-flex px-3 py-2">Search now</Link>
+
+            {lastSuccess && (
+              <div className="success-panel animate-fade-in">
+                <p className="text-sm font-medium text-ink dark:text-ink-dark mb-3">
+                  Successfully indexed!
+                </p>
+                {lastSuccess.recursive ? (
+                  <div className="space-y-2 text-sm text-ink-muted dark:text-ink-dark-muted">
+                    <p>
+                      <span className="text-ink-faint">Batch result · </span>
+                      {lastSuccess.summary.indexed} indexed, {lastSuccess.summary.skipped} skipped,{' '}
+                      {lastSuccess.summary.failed} failed
+                    </p>
+                    <p><span className="text-ink-faint">Time taken · </span>{formatElapsed(lastSuccess.elapsed)}</p>
+                  </div>
+                ) : (
+                  <dl className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <dt className="text-ink-faint text-xs">Page title</dt>
+                      <dd className="text-ink dark:text-ink-dark font-medium mt-0.5 break-words">{lastSuccess.title}</dd>
+                    </div>
+                    {lastSuccess.termCount != null && (
+                      <div>
+                        <dt className="text-ink-faint text-xs">Unique terms</dt>
+                        <dd className="text-ink dark:text-ink-dark font-medium mt-0.5 tabular-nums">{lastSuccess.termCount}</dd>
+                      </div>
+                    )}
+                    <div>
+                      <dt className="text-ink-faint text-xs">Time taken</dt>
+                      <dd className="text-ink dark:text-ink-dark font-medium mt-0.5 tabular-nums">{formatElapsed(lastSuccess.elapsed)}</dd>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <dt className="text-ink-faint text-xs">URL</dt>
+                      <dd className="text-ink-muted dark:text-ink-dark-muted mt-0.5 text-xs truncate">{lastSuccess.url}</dd>
+                    </div>
+                  </dl>
+                )}
+                <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-4">
+                  Now you can search this content.
+                </p>
+                <Link
+                  to={lastSuccess.title ? `/search?q=${encodeURIComponent(lastSuccess.title.split(' ')[0] || '')}` : '/search'}
+                  className="btn-primary text-xs mt-3 inline-flex px-3 py-2"
+                >
+                  Search this content
+                </Link>
               </div>
             )}
 
             <button type="submit" disabled={submitting} className="btn-primary w-full sm:w-auto py-2.5">
-              {submitting ? 'Crawling…' : 'Submit'}
+              {submitting ? 'Indexing…' : 'Index a Website'}
             </button>
           </form>
         </div>
@@ -165,13 +237,33 @@ export default function CrawlManagement() {
         )}
 
         <div className="card-flat">
-          <h2 className="section-title">Indexed pages</h2>
-          <CrawlTable data={pages} loading={loading} emptyMessage="Nothing indexed yet." />
+          <h2 className="section-title">Indexed websites</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
+            Pages ready to appear in search results.
+          </p>
+          {!loading && pages.length === 0 ? (
+            <EmptyState
+              title="No indexed websites yet"
+              description="Submit a URL above to crawl your first page. Once indexed, it becomes searchable."
+            />
+          ) : (
+            <CrawlTable data={pages} loading={loading} emptyMessage="No indexed websites yet." />
+          )}
         </div>
 
         <div className="card-flat">
-          <h2 className="section-title">History</h2>
-          <CrawlTable data={history} loading={loading} emptyMessage="No history yet." />
+          <h2 className="section-title">Recent crawls</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
+            A log of every crawl attempt and its outcome.
+          </p>
+          {!loading && history.length === 0 ? (
+            <EmptyState
+              title="No crawl history"
+              description="Crawl history appears here after you index your first website."
+            />
+          ) : (
+            <CrawlTable data={history} loading={loading} emptyMessage="No recent crawls." />
+          )}
         </div>
       </div>
     </AppPageLayout>

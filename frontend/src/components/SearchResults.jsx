@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/client';
 import ResultCard from './ResultCard';
 import Pagination from './Pagination';
+import EmptyState from './EmptyState';
 
 function ResultSkeleton() {
   return (
@@ -15,7 +16,16 @@ function ResultSkeleton() {
   );
 }
 
-export default function SearchResults({ results, loading, error, pagination, onPageChange, query, responseTime }) {
+export default function SearchResults({
+  results,
+  loading,
+  error,
+  pagination,
+  onPageChange,
+  query,
+  responseTime,
+  hasIndexedPages = true,
+}) {
   const { isAuthenticated } = useAuth();
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState(null);
@@ -36,7 +46,7 @@ export default function SearchResults({ results, loading, error, pagination, onP
   if (loading) {
     return (
       <div>
-        <p className="hint mb-4">Searching…</p>
+        <p className="hint mb-4">Searching indexed pages…</p>
         {[...Array(4)].map((_, i) => (
           <ResultSkeleton key={i} />
         ))}
@@ -46,30 +56,34 @@ export default function SearchResults({ results, loading, error, pagination, onP
 
   if (error) {
     return (
-      <div className="card-flat empty-state">
-        <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">Search failed</p>
-        <p className="text-sm text-ink-muted dark:text-ink-dark-muted">{error}</p>
-        <button type="button" onClick={() => window.location.reload()} className="btn-secondary text-sm mt-5">
-          Try again
-        </button>
-      </div>
+      <EmptyState
+        title="Search failed"
+        description={error}
+        actionLabel="Try again"
+        onAction={() => window.location.reload()}
+      />
     );
   }
 
   if (!results || results.length === 0) {
+    if (!hasIndexedPages) {
+      return (
+        <EmptyState
+          title="No pages indexed yet"
+          description="You searched before indexing any pages. Crawl a website first, then try again."
+          actionLabel="Index a Website"
+          actionTo="/crawl"
+        />
+      );
+    }
+
     return (
-      <div className="card-flat empty-state">
-        <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">
-          No results for &ldquo;{query}&rdquo;
-        </p>
-        <p className="text-sm text-ink-muted dark:text-ink-dark-muted max-w-xs mx-auto leading-relaxed">
-          Try different words, or crawl the page first.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-2 justify-center mt-6 w-full sm:w-auto">
-          <Link to="/crawl" className="btn-primary text-sm w-full sm:w-auto text-center">Crawl a page</Link>
-          <Link to="/" className="btn-secondary text-sm w-full sm:w-auto text-center">New search</Link>
-        </div>
-      </div>
+      <EmptyState
+        title={`No results for "${query}"`}
+        description="Try different keywords, check spelling, or index more pages that contain this topic."
+        actionLabel="Index a Website"
+        actionTo="/crawl"
+      />
     );
   }
 
@@ -77,7 +91,7 @@ export default function SearchResults({ results, loading, error, pagination, onP
     <div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-1 pb-3 sm:pb-4 border-b border-line/80 dark:border-line-dark">
         <p className="hint">
-          {pagination.totalResults} results · {responseTime}ms
+          {pagination.totalResults} results ranked by relevance · {responseTime}ms
         </p>
         {isAuthenticated ? (
           <div className="flex items-center gap-2">
@@ -93,7 +107,7 @@ export default function SearchResults({ results, loading, error, pagination, onP
           </div>
         ) : (
           <Link to="/login" state={{ from: '/search' }} className="link-subtle text-xs">
-            Sign in to save
+            Sign in to save searches
           </Link>
         )}
       </div>

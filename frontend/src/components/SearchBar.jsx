@@ -88,7 +88,11 @@ export default function SearchBar({ initialQuery = '', large = false, onSearch }
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-1.5 card overflow-hidden max-h-52 overflow-y-auto py-1 left-0 right-0">
+        <div className="absolute z-50 w-full mt-1.5 left-0 right-0">
+          <p className="text-[10px] text-ink-faint dark:text-ink-dark-faint px-1 mb-1">
+            Suggestions from indexed content
+          </p>
+          <ul className="card overflow-hidden max-h-52 overflow-y-auto py-1">
           {suggestions.map((s) => (
             <li key={s.term}>
               <button
@@ -101,7 +105,8 @@ export default function SearchBar({ initialQuery = '', large = false, onSearch }
               </button>
             </li>
           ))}
-        </ul>
+          </ul>
+        </div>
       )}
     </div>
   );

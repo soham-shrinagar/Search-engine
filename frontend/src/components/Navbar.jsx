@@ -2,13 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-
-const navItems = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/crawl', label: 'Crawl' },
-  { to: '/bookmarks', label: 'Bookmarks', auth: true },
-  { to: '/account', label: 'Account', auth: true },
-];
+import { appLinks, NavIcon } from './navConfig';
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -28,7 +22,7 @@ export default function Navbar() {
     navigate('/');
   };
 
-  const visibleItems = navItems.filter((item) => !item.auth || isAuthenticated);
+  const visibleItems = appLinks.filter((item) => !item.auth || isAuthenticated);
 
   return (
     <header className="sticky top-0 z-50 border-b border-line/80 dark:border-line-dark bg-page/90 dark:bg-page-dark/90 backdrop-blur-lg safe-bottom">
@@ -41,15 +35,20 @@ export default function Navbar() {
           SearchSphere
         </Link>
 
-        <nav className="hidden md:flex items-center gap-5 flex-1 justify-center">
+        <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
           {visibleItems.map((item) => {
             const active = location.pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={active ? 'nav-link-active text-sm' : 'nav-link'}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                  active
+                    ? 'font-medium text-ink dark:text-ink-dark bg-surface dark:bg-surface-dark'
+                    : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink dark:hover:text-ink-dark hover:bg-surface/60 dark:hover:bg-surface-dark/60'
+                }`}
               >
+                <NavIcon name={item.icon} className="w-4 h-4 opacity-70" />
                 {item.label}
               </Link>
             );
@@ -111,12 +110,13 @@ export default function Navbar() {
               key={item.to}
               to={item.to}
               onClick={() => setMenuOpen(false)}
-              className={`block py-3 text-sm min-h-[44px] flex items-center ${
+              className={`flex items-center gap-2.5 py-3 text-sm min-h-[44px] ${
                 location.pathname === item.to
                   ? 'font-medium text-ink dark:text-ink-dark'
                   : 'text-ink-muted dark:text-ink-dark-muted'
               }`}
             >
+              <NavIcon name={item.icon} className="w-4 h-4 opacity-70" />
               {item.label}
             </Link>
           ))}

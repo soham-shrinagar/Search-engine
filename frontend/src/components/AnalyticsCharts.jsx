@@ -1,17 +1,14 @@
-function formatChartDate(dateStr) {
-  if (!dateStr) return '';
-  const [year, month, day] = String(dateStr).split('T')[0].split('-');
-  return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-}
-
-function BarChart({ data, labelKey, valueKey, title }) {
+function BarChart({ data, labelKey, valueKey, title, description }) {
   const max = data?.length ? Math.max(...data.map((d) => d[valueKey])) : 1;
 
   return (
     <div className="card-flat">
-      <h3 className="section-title">{title}</h3>
+      <h3 className="section-title !mb-1">{title}</h3>
+      {description && (
+        <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">{description}</p>
+      )}
       {!data?.length ? (
-        <p className="text-xs text-ink-faint text-center py-8">No data yet</p>
+        <p className="text-xs text-ink-faint text-center py-8">No data yet — run some searches first.</p>
       ) : (
         <div className="space-y-3">
           {data.slice(0, 8).map((item, i) => (
@@ -38,12 +35,15 @@ function BarChart({ data, labelKey, valueKey, title }) {
   );
 }
 
-function LineChart({ data, title }) {
+function LineChart({ data, title, description }) {
   return (
     <div className="card-flat">
-      <h3 className="section-title">{title}</h3>
+      <h3 className="section-title !mb-1">{title}</h3>
+      {description && (
+        <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">{description}</p>
+      )}
       {!data?.length ? (
-        <p className="text-xs text-ink-faint text-center py-8">No searches yet</p>
+        <p className="text-xs text-ink-faint text-center py-8">No searches yet — try searching from the home page.</p>
       ) : (
         <>
           <svg viewBox="0 0 100 40" className="w-full h-20 sm:h-24 mt-1" preserveAspectRatio="none">
@@ -71,6 +71,12 @@ function LineChart({ data, title }) {
   );
 }
 
+function formatChartDate(dateStr) {
+  if (!dateStr) return '';
+  const [year, month, day] = String(dateStr).split('T')[0].split('-');
+  return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 function ChartSkeleton() {
   return (
     <div className="card-flat">
@@ -91,13 +97,24 @@ export default function AnalyticsCharts({ searchesOverTime, topTerms, topDocumen
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-      <LineChart data={searchesOverTime} title="Searches over time" />
-      <BarChart data={topTerms} labelKey="query" valueKey="count" title="Top queries" />
+      <LineChart
+        data={searchesOverTime}
+        title="Searches over time"
+        description="Shows user search activity day by day."
+      />
+      <BarChart
+        data={topTerms}
+        labelKey="query"
+        valueKey="count"
+        title="Top queries"
+        description="Most frequently searched terms."
+      />
       <BarChart
         data={topDocuments?.map((d) => ({ query: d.title || d.url, count: d.bookmarkCount }))}
         labelKey="query"
         valueKey="count"
-        title="Most bookmarked"
+        title="Indexed pages growth"
+        description="Most bookmarked searchable pages in your index."
       />
     </div>
   );

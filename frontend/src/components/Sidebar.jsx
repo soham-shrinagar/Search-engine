@@ -1,12 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-export const appLinks = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/crawl', label: 'Crawl' },
-  { to: '/bookmarks', label: 'Bookmarks', auth: true },
-  { to: '/account', label: 'Account', auth: true },
-];
+import { appLinks, NavIcon } from './navConfig';
 
 function useVisibleLinks() {
   const { isAuthenticated } = useAuth();
@@ -29,12 +23,13 @@ export function MobileTabNav() {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-3.5 py-2 text-sm rounded-lg whitespace-nowrap transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-sm rounded-lg whitespace-nowrap transition-colors ${
                 active
                   ? 'font-medium text-ink dark:text-ink-dark bg-surface dark:bg-surface-dark'
                   : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink dark:hover:text-ink-dark'
               }`}
             >
+              <NavIcon name={link.icon} className="w-3.5 h-3.5 opacity-70" />
               {link.label}
             </Link>
           );
@@ -49,7 +44,7 @@ export default function Sidebar() {
   const visibleLinks = useVisibleLinks();
 
   return (
-    <aside className="w-44 flex-shrink-0 hidden lg:block">
+    <aside className="w-48 flex-shrink-0 hidden lg:block">
       <nav className="sticky top-[4.5rem] space-y-0.5">
         {visibleLinks.map((link) => {
           const active = location.pathname === link.to;
@@ -57,12 +52,13 @@ export default function Sidebar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
                 active
                   ? 'font-medium text-ink dark:text-ink-dark bg-surface dark:bg-surface-dark'
                   : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink dark:hover:text-ink-dark hover:bg-surface/80 dark:hover:bg-surface-dark/80'
               }`}
             >
+              <NavIcon name={link.icon} className="w-4 h-4 opacity-70" />
               {link.label}
             </Link>
           );

@@ -37,14 +37,14 @@ export default function DashboardCards({ metrics, loading }) {
   if (!metrics) return null;
 
   const cards = [
-    { title: 'Indexed', value: metrics.totalIndexedPages, subtitle: 'searchable pages' },
-    { title: 'Terms', value: metrics.totalTerms, subtitle: 'in index' },
-    { title: 'Searches', value: metrics.totalSearches, subtitle: 'all time' },
-    { title: 'Latency', value: `${metrics.avgResponseTime}ms`, subtitle: 'avg response' },
-    { title: 'Crawl OK', value: `${metrics.crawlSuccessRate}%`, subtitle: 'success rate' },
-    { title: 'Crawl fail', value: `${metrics.crawlFailureRate}%`, subtitle: 'failure rate' },
-    { title: 'Pages', value: metrics.totalPages, subtitle: 'submitted' },
-    { title: 'Postings', value: metrics.totalPostings, subtitle: 'term-doc pairs' },
+    { title: 'Indexed pages', value: metrics.totalIndexedPages, subtitle: 'ready to search' },
+    { title: 'Search terms', value: metrics.totalTerms, subtitle: 'in the index' },
+    { title: 'Total searches', value: metrics.totalSearches, subtitle: 'all time' },
+    { title: 'Avg response', value: `${metrics.avgResponseTime}ms`, subtitle: 'search speed' },
+    { title: 'Crawl success', value: `${metrics.crawlSuccessRate}%`, subtitle: 'indexing rate' },
+    { title: 'Crawl failures', value: `${metrics.crawlFailureRate}%`, subtitle: 'failed attempts' },
+    { title: 'Submitted URLs', value: metrics.totalPages, subtitle: 'pages crawled' },
+    { title: 'Index entries', value: metrics.totalPostings, subtitle: 'term-page pairs' },
   ];
 
   return (
