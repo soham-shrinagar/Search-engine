@@ -217,7 +217,3 @@ javscript                     # fuzzy → javascript
 - **System Design**: Rate limiting, caching-ready architecture, incremental indexing
 - **Full-Stack**: React SPA with dark mode, auth, analytics dashboard
 - **Production Deployment**: Vercel + Render + Neon
-
-## License
-
-MIT
