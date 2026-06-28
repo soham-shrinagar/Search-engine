@@ -208,7 +208,7 @@ react NOT angular             # boolean NOT
 javscript                     # fuzzy → javascript
 ```
 
-## Resume Highlights
+## Highlights
 
 - **Search Engine Architecture**: Full pipeline from crawl to ranked results
 - **Information Retrieval**: TF-IDF, inverted index, boolean/phrase/fuzzy search
