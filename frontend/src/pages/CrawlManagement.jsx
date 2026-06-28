@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AppPageLayout from '../components/AppPageLayout';
 import CrawlTable from '../components/CrawlTable';
 import CrawlPipeline from '../components/CrawlPipeline';
+import CrawlErrorPanel from '../components/CrawlErrorPanel';
 import EmptyState from '../components/EmptyState';
 import { crawlApi } from '../api/client';
 
@@ -71,15 +72,21 @@ export default function CrawlManagement() {
       const elapsed = Date.now() - startTime;
 
       if (recursive) {
-        const { summary, results } = data.data;
-        const firstIndexed = results?.find((r) => r.title && r.status === 'indexed');
-        setLastSuccess({
-          recursive: true,
-          summary,
-          title: firstIndexed?.title || url.trim(),
-          url: url.trim(),
-          elapsed,
-        });
+        const { summary } = data.data;
+        if (summary.indexed === 0 && summary.failed > 0) {
+          setSubmitError(
+            `Crawl finished but no pages were indexed (${summary.failed} failed, ${summary.skipped} skipped). ` +
+            'This site may block crawlers or require login.'
+          );
+        } else {
+          setLastSuccess({
+            recursive: true,
+            summary,
+            title: url.trim(),
+            url: url.trim(),
+            elapsed,
+          });
+        }
       } else {
         setLastSuccess({
           recursive: false,
@@ -172,9 +179,7 @@ export default function CrawlManagement() {
               )}
             </div>
 
-            {submitError && (
-              <p className="text-sm text-ink-muted dark:text-ink-dark-muted break-words">{submitError}</p>
-            )}
+            {submitError && <CrawlErrorPanel message={submitError} />}
 
             {lastSuccess && (
               <div className="success-panel animate-fade-in">

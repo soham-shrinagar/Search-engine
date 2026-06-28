@@ -2,6 +2,7 @@ const express = require('express');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { crawlLimiter } = require('../middleware/rateLimiter');
 const { isValidUrl, normalizeUrl } = require('../utils/urlValidator');
+const { applyCrawlError } = require('../utils/crawlErrors');
 const {
   crawlSinglePage,
   crawlRecursive,
@@ -41,8 +42,7 @@ router.post(
       const { html, ...safeResult } = result;
       res.json({ success: true, data: safeResult });
     } catch (err) {
-      if (!err.status) err.status = 500;
-      throw err;
+      throw applyCrawlError(err);
     }
   })
 );

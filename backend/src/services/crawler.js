@@ -3,6 +3,7 @@ const { query } = require('../config/database');
 const { extractContent } = require('./extractor');
 const { hashContent, indexPage, removePageFromIndex } = require('./indexer');
 const { isValidUrl, normalizeUrl, resolveUrl, isSameDomain } = require('../utils/urlValidator');
+const { applyCrawlError } = require('../utils/crawlErrors');
 
 const CRAWL_TIMEOUT = 15000;
 const MAX_RETRIES = 3;
@@ -174,7 +175,7 @@ async function crawlSinglePage(url) {
       [pageId]
     );
     await logCrawl(pageId, 'failed', err.message);
-    throw err;
+    throw applyCrawlError(err);
   }
 }
 
@@ -234,6 +235,7 @@ async function crawlRecursive(startUrl, options = {}) {
         }
       }
     } catch (err) {
+      applyCrawlError(err);
       results.push({ url, status: 'failed', error: err.message });
     }
 
