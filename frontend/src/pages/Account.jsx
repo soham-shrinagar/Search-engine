@@ -37,7 +37,7 @@ export default function Account() {
   };
 
   return (
-    <AppPageLayout title="Account" subtitle="Your saved searches and search history when signed in.">
+    <AppPageLayout title="Account" subtitle="Saved searches and history.">
       {loading ? (
         <div className="space-y-3">
           {[...Array(2)].map((_, i) => (
@@ -54,8 +54,8 @@ export default function Account() {
           <section className="card-flat">
             <h2 className="section-title">Saved searches</h2>
             {saved.length === 0 ? (
-              <p className="text-sm text-ink-muted dark:text-ink-dark-muted leading-relaxed">
-                No saved searches yet. Run a search and use &ldquo;Save search&rdquo; on the results page.
+              <p className="text-sm text-ink-muted dark:text-ink-dark-muted">
+                No saved searches yet.
               </p>
             ) : (
               <div className="divide-y divide-line/60 dark:divide-line-dark -mx-4 sm:-mx-5 px-4 sm:px-5">
@@ -82,8 +82,8 @@ export default function Account() {
           <section className="card-flat">
             <h2 className="section-title">Search history</h2>
             {history.length === 0 ? (
-              <p className="text-sm text-ink-muted dark:text-ink-dark-muted leading-relaxed">
-                No search history yet. Your recent queries will appear here after you search while signed in.
+              <p className="text-sm text-ink-muted dark:text-ink-dark-muted">
+                No search history yet.
               </p>
             ) : (
               <div className="divide-y divide-line/60 dark:divide-line-dark -mx-4 sm:-mx-5 px-4 sm:px-5">

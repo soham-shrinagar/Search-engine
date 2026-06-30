@@ -31,13 +31,12 @@ function HelpSection({ title, children, defaultOpen = false }) {
   );
 }
 
-function Example({ query, note }) {
+function Example({ query }) {
   return (
-    <div className="mt-3 first:mt-0">
+    <div className="mt-2 first:mt-0">
       <code className="text-xs font-mono bg-page dark:bg-page-dark border border-line/60 dark:border-line-dark px-2 py-1 rounded-md text-ink dark:text-ink-dark">
         {query}
       </code>
-      <p className="text-xs mt-1.5 leading-relaxed">{note}</p>
     </div>
   );
 }
@@ -45,32 +44,20 @@ function Example({ query, note }) {
 export default function SearchHelp() {
   return (
     <div className="space-y-2">
-      <p className="text-xs text-ink-faint dark:text-ink-dark-faint mb-3">
-        Advanced search options — expand to learn more.
-      </p>
-
       <HelpSection title="Boolean search">
-        <p className="text-xs mb-2">Combine keywords with AND, OR, and NOT.</p>
-        <Example query="react AND node" note="Pages must contain both words." />
-        <Example query="react OR vue" note="Pages can contain either word." />
-        <Example query="react NOT angular" note="Pages with react but not angular." />
+        <Example query="react AND node" />
+        <Example query="react OR vue" />
+        <Example query="react NOT angular" />
       </HelpSection>
 
       <HelpSection title="Phrase search">
-        <Example
-          query='"machine learning"'
-          note="Returns pages where this exact phrase appears, in order."
-        />
+        <Example query='"machine learning"' />
       </HelpSection>
 
       <HelpSection title="Fuzzy search">
-        <p className="text-xs leading-relaxed mb-3">
-          Minor typos are corrected automatically when no exact match is found.
-        </p>
-        <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-mono mt-2">
           <span className="px-2 py-1 rounded-md border border-line/60 dark:border-line-dark">javscript</span>
           <span className="text-ink-faint">→</span>
-          <span className="text-ink-faint">Did you mean</span>
           <span className="px-2 py-1 rounded-md bg-surface dark:bg-surface-dark-hover font-medium text-ink dark:text-ink-dark">
             javascript
           </span>

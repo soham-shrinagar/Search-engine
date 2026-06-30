@@ -1,4 +1,4 @@
-function MetricCard({ title, value, subtitle }) {
+function MetricCard({ title, value }) {
   return (
     <div className="card-flat !p-3 sm:!p-5">
       <p className="text-[10px] sm:text-[11px] uppercase tracking-wide text-ink-faint dark:text-ink-dark-faint mb-1.5 sm:mb-2">
@@ -7,11 +7,6 @@ function MetricCard({ title, value, subtitle }) {
       <p className="text-lg sm:text-2xl font-semibold tracking-tight text-ink dark:text-ink-dark tabular-nums">
         {value ?? '—'}
       </p>
-      {subtitle && (
-        <p className="text-[11px] sm:text-xs text-ink-muted dark:text-ink-dark-muted mt-0.5 sm:mt-1 hidden sm:block">
-          {subtitle}
-        </p>
-      )}
     </div>
   );
 }
@@ -37,14 +32,14 @@ export default function DashboardCards({ metrics, loading }) {
   if (!metrics) return null;
 
   const cards = [
-    { title: 'Indexed pages', value: metrics.totalIndexedPages, subtitle: 'ready to search' },
-    { title: 'Search terms', value: metrics.totalTerms, subtitle: 'in the index' },
-    { title: 'Total searches', value: metrics.totalSearches, subtitle: 'all time' },
-    { title: 'Avg response', value: `${metrics.avgResponseTime}ms`, subtitle: 'search speed' },
-    { title: 'Crawl success', value: `${metrics.crawlSuccessRate}%`, subtitle: 'indexing rate' },
-    { title: 'Crawl failures', value: `${metrics.crawlFailureRate}%`, subtitle: 'failed attempts' },
-    { title: 'Submitted URLs', value: metrics.totalPages, subtitle: 'pages crawled' },
-    { title: 'Index entries', value: metrics.totalPostings, subtitle: 'term-page pairs' },
+    { title: 'Indexed pages', value: metrics.totalIndexedPages },
+    { title: 'Search terms', value: metrics.totalTerms },
+    { title: 'Total searches', value: metrics.totalSearches },
+    { title: 'Avg response', value: `${metrics.avgResponseTime}ms` },
+    { title: 'Crawl success', value: `${metrics.crawlSuccessRate}%` },
+    { title: 'Crawl failures', value: `${metrics.crawlFailureRate}%` },
+    { title: 'Submitted URLs', value: metrics.totalPages },
+    { title: 'Index entries', value: metrics.totalPostings },
   ];
 
   return (

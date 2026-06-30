@@ -1,25 +1,8 @@
 const steps = [
-  {
-    number: 1,
-    title: 'Submit URL',
-    description: 'Provide a webpage that you want SearchSphere to crawl.',
-  },
-  {
-    number: 2,
-    title: 'Crawl & Index',
-    description:
-      'The crawler downloads the page, extracts readable text, tokenizes it, removes stop words, and stores an inverted index.',
-  },
-  {
-    number: 3,
-    title: 'Search',
-    description: 'Search only across pages that have already been indexed.',
-  },
-  {
-    number: 4,
-    title: 'Rank Results',
-    description: 'Results are ranked using TF-IDF and other relevance signals before being displayed.',
-  },
+  { number: 1, title: 'Submit URL' },
+  { number: 2, title: 'Crawl & Index' },
+  { number: 3, title: 'Search' },
+  { number: 4, title: 'Rank Results' },
 ];
 
 function Arrow() {
@@ -44,9 +27,6 @@ export default function HowItWorks() {
             <div className="workflow-card flex-1 sm:max-w-[200px]">
               <span className="workflow-step-num">{step.number}</span>
               <h3 className="text-sm font-medium text-ink dark:text-ink-dark mt-3">{step.title}</h3>
-              <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-2 leading-relaxed">
-                {step.description}
-              </p>
             </div>
             {i < steps.length - 1 && <Arrow />}
           </div>

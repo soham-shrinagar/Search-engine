@@ -8,7 +8,7 @@ function BarChart({ data, labelKey, valueKey, title, description }) {
         <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">{description}</p>
       )}
       {!data?.length ? (
-        <p className="text-xs text-ink-faint text-center py-8">No data yet — run some searches first.</p>
+        <p className="text-xs text-ink-faint text-center py-8">No data yet.</p>
       ) : (
         <div className="space-y-3">
           {data.slice(0, 8).map((item, i) => (
@@ -43,7 +43,7 @@ function LineChart({ data, title, description }) {
         <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">{description}</p>
       )}
       {!data?.length ? (
-        <p className="text-xs text-ink-faint text-center py-8">No searches yet — try searching from the home page.</p>
+        <p className="text-xs text-ink-faint text-center py-8">No searches yet.</p>
       ) : (
         <>
           <svg viewBox="0 0 100 40" className="w-full h-20 sm:h-24 mt-1" preserveAspectRatio="none">
@@ -97,24 +97,13 @@ export default function AnalyticsCharts({ searchesOverTime, topTerms, topDocumen
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-      <LineChart
-        data={searchesOverTime}
-        title="Searches over time"
-        description="Shows user search activity day by day."
-      />
-      <BarChart
-        data={topTerms}
-        labelKey="query"
-        valueKey="count"
-        title="Top queries"
-        description="Most frequently searched terms."
-      />
+      <LineChart data={searchesOverTime} title="Searches over time" />
+      <BarChart data={topTerms} labelKey="query" valueKey="count" title="Top queries" />
       <BarChart
         data={topDocuments?.map((d) => ({ query: d.title || d.url, count: d.bookmarkCount }))}
         labelKey="query"
         valueKey="count"
-        title="Indexed pages growth"
-        description="Most bookmarked searchable pages in your index."
+        title="Most bookmarked"
       />
     </div>
   );

@@ -76,10 +76,7 @@ export default function Dashboard() {
   const isEmpty = !loading && metrics?.totalIndexedPages === 0;
 
   return (
-    <AppPageLayout
-      title="Analytics"
-      subtitle="This dashboard shows how SearchSphere is being used and how your search index grows over time."
-    >
+    <AppPageLayout title="Analytics" subtitle="Index stats and search activity.">
       {hasAnyError && (
         <div className="card-flat mb-4 sm:mb-6 text-sm text-ink-muted dark:text-ink-dark-muted">
           Some sections couldn&apos;t load. Showing what&apos;s available.
@@ -90,7 +87,7 @@ export default function Dashboard() {
         <div className="mb-4 sm:mb-6">
           <EmptyState
             title="No analytics yet"
-            description="Analytics will appear after you index websites and run searches. Start by crawling a page."
+            description="Index some pages and run a few searches first."
             actionLabel="Index a Website"
             actionTo="/crawl"
           />
@@ -113,15 +110,12 @@ export default function Dashboard() {
 
         <div className="card-flat">
           <h2 className="section-title">Recent crawls</h2>
-          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
-            Latest indexing activity across your submitted URLs.
-          </p>
           {sectionErrors.history ? (
             <p className="text-sm text-ink-muted">Couldn&apos;t load crawl history</p>
           ) : !loading && crawlHistory.length === 0 ? (
             <EmptyState
               title="No crawl history"
-              description="Once you index a website, each crawl attempt will be logged here."
+              description="Nothing here yet."
               actionLabel="Index a Website"
               actionTo="/crawl"
             />
@@ -132,15 +126,12 @@ export default function Dashboard() {
 
         <div className="card-flat">
           <h2 className="section-title">Crawl errors</h2>
-          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
-            Failed crawl attempts — useful for debugging indexing issues.
-          </p>
           {sectionErrors.errorLog ? (
             <p className="text-sm text-ink-muted">Couldn&apos;t load errors</p>
           ) : !loading && errors.length === 0 ? (
             <EmptyState
               title="No errors"
-              description="All crawls completed successfully, or no crawls have been attempted yet."
+              description="No failed crawls."
             />
           ) : (
             <CrawlTable
