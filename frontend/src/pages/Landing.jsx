@@ -19,8 +19,8 @@ export default function Landing() {
         <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-tight text-ink dark:text-ink-dark leading-tight">
           SearchSphere
         </h1>
-        <p className="text-ink-muted dark:text-ink-dark-muted text-sm sm:text-[15px] mt-3 sm:mt-4 max-w-xl mx-auto px-2">
-          Crawl pages, build an index, search what you added.
+        <p className="text-ink-muted dark:text-ink-dark-muted text-sm sm:text-[15px] mt-3 sm:mt-4 leading-relaxed max-w-xl mx-auto px-2">
+          Build your own searchable web by crawling pages, indexing their content, and searching through them.
         </p>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 mt-6 sm:mt-7 max-w-xs sm:max-w-none mx-auto">
           <Link to="/register" className="btn-primary px-5 py-2.5 sm:py-2">Sign up</Link>
@@ -30,8 +30,9 @@ export default function Landing() {
 
       {hasPages === false && (
         <div className="info-banner mb-6 sm:mb-8 animate-fade-in">
-          <p className="text-sm text-ink dark:text-ink-dark">
-            Search only works on pages you&apos;ve already crawled.
+          <p className="text-sm text-ink dark:text-ink-dark leading-relaxed">
+            <span className="font-medium">SearchSphere can only search pages that have already been crawled.</span>
+            {' '}If this is your first time using the project, index a webpage first.
           </p>
           <Link to="/crawl" className="btn-primary text-sm mt-4 w-full sm:w-auto">
             Crawl Your First Page
@@ -43,7 +44,7 @@ export default function Landing() {
         <SearchBar large />
         {hasPages === false && (
           <p className="hint text-center mt-3 px-2">
-            No pages indexed yet.
+            No pages indexed yet — search will return empty results until you crawl.
           </p>
         )}
       </div>

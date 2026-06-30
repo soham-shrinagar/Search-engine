@@ -70,7 +70,7 @@ export default function SearchResults({
       return (
         <EmptyState
           title="No pages indexed yet"
-          description="Index a page first."
+          description="You searched before indexing any pages. Crawl a website first, then try again."
           actionLabel="Index a Website"
           actionTo="/crawl"
         />
@@ -80,7 +80,7 @@ export default function SearchResults({
     return (
       <EmptyState
         title={`No results for "${query}"`}
-        description="Try different keywords or index more pages."
+        description="Try different keywords, check spelling, or index more pages that contain this topic."
         actionLabel="Index a Website"
         actionTo="/crawl"
       />
@@ -91,7 +91,7 @@ export default function SearchResults({
     <div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-1 pb-3 sm:pb-4 border-b border-line/80 dark:border-line-dark">
         <p className="hint">
-          {pagination.totalResults} results · {responseTime}ms
+          {pagination.totalResults} results ranked by relevance · {responseTime}ms
         </p>
         {isAuthenticated ? (
           <div className="flex items-center gap-2">

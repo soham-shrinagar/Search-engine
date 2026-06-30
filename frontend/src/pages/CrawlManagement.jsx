@@ -112,12 +112,18 @@ export default function CrawlManagement() {
   };
 
   return (
-    <AppPageLayout title="Index Website" subtitle="Crawl pages before you can search them.">
+    <AppPageLayout
+      title="Index Website"
+      subtitle="Add webpages to your search index. Crawling must happen before search — this is where your searchable content comes from."
+    >
       <div className="space-y-4 sm:space-y-6">
         <CrawlPipeline />
 
         <div className="card-flat">
-          <h2 className="text-sm font-medium text-ink dark:text-ink-dark mb-4">Index a website</h2>
+          <h2 className="text-sm font-medium text-ink dark:text-ink-dark mb-1">Index a website</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted mb-4 leading-relaxed">
+            Paste a URL below. SearchSphere will crawl it and add the content to your index.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="crawl-url" className="block text-xs font-medium text-ink-muted dark:text-ink-dark-muted mb-1.5">
@@ -211,8 +217,8 @@ export default function CrawlManagement() {
                     </div>
                   </dl>
                 )}
-                <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-3">
-                  Ready to search.
+                <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-4">
+                  Now you can search this content.
                 </p>
                 <Link
                   to={lastSuccess.title ? `/search?q=${encodeURIComponent(lastSuccess.title.split(' ')[0] || '')}` : '/search'}
@@ -237,10 +243,13 @@ export default function CrawlManagement() {
 
         <div className="card-flat">
           <h2 className="section-title">Indexed websites</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
+            Pages ready to appear in search results.
+          </p>
           {!loading && pages.length === 0 ? (
             <EmptyState
-              title="Nothing indexed yet"
-              description="Submit a URL above to get started."
+              title="No indexed websites yet"
+              description="Submit a URL above to crawl your first page. Once indexed, it becomes searchable."
             />
           ) : (
             <CrawlTable data={pages} loading={loading} emptyMessage="No indexed websites yet." />
@@ -249,10 +258,13 @@ export default function CrawlManagement() {
 
         <div className="card-flat">
           <h2 className="section-title">Recent crawls</h2>
+          <p className="text-xs text-ink-muted dark:text-ink-dark-muted -mt-2 mb-4 leading-relaxed">
+            A log of every crawl attempt and its outcome.
+          </p>
           {!loading && history.length === 0 ? (
             <EmptyState
               title="No crawl history"
-              description="Shows up after your first crawl."
+              description="Crawl history appears here after you index your first website."
             />
           ) : (
             <CrawlTable data={history} loading={loading} emptyMessage="No recent crawls." />

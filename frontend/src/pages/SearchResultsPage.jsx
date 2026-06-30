@@ -114,8 +114,8 @@ export default function SearchResultsPage() {
         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-ink dark:text-ink-dark mb-2">
           Search
         </h1>
-        <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-5 sm:mb-6">
-          Only indexed pages are searchable.
+        <p className="text-sm text-ink-muted dark:text-ink-dark-muted leading-relaxed mb-5 sm:mb-6">
+          This search engine indexes webpages that you have previously crawled. Only indexed pages are searchable.
         </p>
         <SearchBar initialQuery={query} />
       </div>
@@ -123,7 +123,7 @@ export default function SearchResultsPage() {
       {!hasIndexedPages && !statsLoading && (
         <EmptyState
           title="No pages indexed yet"
-          description="Index a page first, then search."
+          description="Start by crawling a webpage to build your searchable index. Until then, every search will return zero results."
           actionLabel="Go to Index Website"
           actionTo="/crawl"
         />
@@ -134,7 +134,7 @@ export default function SearchResultsPage() {
           <IndexStatsBar metrics={metrics} lastCrawl={lastCrawl} loading={statsLoading} />
           <EmptyState
             title="Enter a search query"
-            description="Type something above to search your index."
+            description="Type keywords above to search across your indexed pages. Try names, topics, or phrases in quotes."
             actionLabel="Index another website"
             actionTo="/crawl"
           />

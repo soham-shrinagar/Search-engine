@@ -35,7 +35,7 @@ export default function Bookmarks() {
   };
 
   return (
-    <AppPageLayout title="Bookmarks" subtitle="Pages saved from search results.">
+    <AppPageLayout title="Bookmarks" subtitle="Pages you saved from search results. Bookmark a result while signed in.">
       {loading ? (
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
@@ -50,8 +50,8 @@ export default function Bookmarks() {
       ) : bookmarks.length === 0 ? (
         <div className="card-flat empty-state">
           <p className="text-sm font-medium text-ink dark:text-ink-dark mb-1">No bookmarks yet</p>
-          <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-6 max-w-xs mx-auto">
-            Search for something and bookmark a result.
+          <p className="text-sm text-ink-muted dark:text-ink-dark-muted mb-6 max-w-xs mx-auto leading-relaxed">
+            Search for something, then tap the bookmark icon on any result to save it here.
           </p>
           <Link to="/search" className="btn-primary text-sm w-full sm:w-auto max-w-xs mx-auto">Go to search</Link>
         </div>
